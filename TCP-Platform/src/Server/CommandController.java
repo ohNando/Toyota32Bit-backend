@@ -1,11 +1,14 @@
 package Server;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Properties;
 
 public class CommandController {
     private final Properties properties;
+    private Set<String> activeSubs = new HashSet<>();
     CommandController(Properties properties){
         this.properties = properties;
     }
@@ -33,15 +36,34 @@ public class CommandController {
         return platformName.equals(properties.getProperty("command.platform-name"));
     }
 
+    public String getCommandName(String receivedMessage){
+        return receivedMessage.split("\\|")[0];
+    }
+
+    public String getPlatformName(String receivedMessage){
+        String[] parts = receivedMessage.split("\\|");
+        if(parts.length > 1)
+            return parts[1].split("_")[0];
+        else
+            return "";
+    }
+
+    public String getCurrencyRate(String receivedMessage){
+        String[] parts = receivedMessage.split("\\|");
+        if(parts.length > 1)
+            return parts[1].split("_")[1];
+        else
+            return "";
+    }
+
     String checkCommand(String receivedMessage){
-        String commandName = receivedMessage.split("\\|")[0];
-        String platformName = receivedMessage.split("\\|")[1].split("_")[0];
-        String currencyRate = receivedMessage.split("\\|")[1].split("_")[1];
+        String commandName = getCommandName(receivedMessage);
+        String platformName = getPlatformName(receivedMessage);
+        String currencyRate = getCurrencyRate(receivedMessage);
 
         if(!isValidCommand(commandName)) return "(-)|Invalid command";
         if(!isValidPlatformName(platformName)) return "(-)|Invalid platform name";
         if(!isValidRate(currencyRate)) return "(-)|Invalid currency pair";
         return "OK";
     }
-
 }
