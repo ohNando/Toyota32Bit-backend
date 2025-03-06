@@ -8,19 +8,29 @@ import java.util.Properties;
 
 public class ServerApp {
     public static void main(String[] args) {
-        try{
-            int clientCount = 0;
-            Properties properties = new Properties();
-            properties.load(new FileInputStream("src/config.properties"));
+        Properties properties = new Properties();
+        String configFilePath = System.getProperty("user.dir") + "/src/config.properties";
+        try(FileInputStream configFile = new FileInputStream(configFilePath)){
+            properties.load(configFile);
             int port = Integer.parseInt(properties.getProperty("tcp-platform.server.port"));
-            ServerSocket serverSocket = new ServerSocket(port);
-            while(true){
-                Socket socket = serverSocket.accept();
-                new Thread(new ServerHandler(socket,properties)).start();
-                System.out.printf("Client %d connected\n",++clientCount);
+
+            try(ServerSocket serverSocket = new ServerSocket(port)){
+                System.out.println("Server started on port " + port);
+                short clientCount = 0;
+                while(true){
+                    try{
+                        Socket socket = serverSocket.accept();
+                        new Thread(new ServerHandler(socket,properties)).start();
+                        System.out.printf("Client %d connected\n",++clientCount);
+                    }catch (IOException error){
+                        System.out.println("(!)|client cannot connected" + error.getMessage());
+                        break;
+                    }
+                }
             }
-        }catch(IOException e){
-            e.printStackTrace();
+        }catch(IOException error){
+            System.out.println("(!)|server cannot started" + error.getMessage());
+            error.printStackTrace();
         }
     }
 }

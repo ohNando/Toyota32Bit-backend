@@ -1,13 +1,12 @@
 package Server;
 
-import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.Properties;
 import java.util.Random;
 
 public class RateDataProducer {
-    private Properties properties;
-    private Random random;
+    private final Properties properties;
+    private final Random random;
 
     public RateDataProducer(Properties properties){
         this.properties = properties;
@@ -29,13 +28,12 @@ public class RateDataProducer {
     }
 
     private double getBaseRate(String currencyRate){
-        String key = "rates.base." + currencyRate;
-        String rateString = properties.getProperty(key);
+        String rateString = properties.getProperty("rates.base." + currencyRate);
 
         if(rateString != null){
             return Double.parseDouble(rateString);
         }else{
-            return 0;
+            throw new IllegalArgumentException("(-)|Invalid currency pair");
         }
     }
 }
