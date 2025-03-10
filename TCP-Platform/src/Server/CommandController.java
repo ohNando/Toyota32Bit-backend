@@ -1,14 +1,12 @@
 package Server;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Properties;
 
 public class CommandController {
     private final Properties properties;
-    private Set<String> activeSubs = new HashSet<>();
+
     CommandController(Properties properties){
         this.properties = properties;
     }
@@ -37,29 +35,41 @@ public class CommandController {
     }
 
     public String getCommandName(String receivedMessage){
-        return receivedMessage.split("\\|")[0];
+        String[] parts = receivedMessage.split("\\|");
+        return parts.length > 0 ? parts[0] : "";
     }
 
     public String getPlatformName(String receivedMessage){
         String[] parts = receivedMessage.split("\\|");
-        if(parts.length > 1)
-            return parts[1].split("_")[0];
-        else
-            return "";
+        if(parts.length > 1) {
+            String[] platformParts = parts[1].split("_");
+            return platformParts.length > 0 ? platformParts[0] : "";
+        }
+        return "";
     }
 
     public String getCurrencyRate(String receivedMessage){
         String[] parts = receivedMessage.split("\\|");
-        if(parts.length > 1)
-            return parts[1].split("_")[1];
-        else
-            return "";
+        if(parts.length > 1) {
+            String[] platformParts = parts[1].split("_");
+            return platformParts.length > 1 ? platformParts[1] : "";
+        }
+        return "";
     }
 
     String checkCommand(String receivedMessage){
         String commandName = getCommandName(receivedMessage);
         String platformName = getPlatformName(receivedMessage);
         String currencyRate = getCurrencyRate(receivedMessage);
+
+        System.out.println("commandName: " + commandName);
+        System.out.println("platformName: " + platformName);
+        System.out.println("currencyRate: " + currencyRate);
+
+
+        if(commandName.isEmpty()) return "(-)|Missing command";
+        if(platformName.isEmpty()) return "(-)|Missing platform name";
+        if(currencyRate.isEmpty()) return "(-)|Missing currency rate";
 
         if(!isValidCommand(commandName)) return "(-)|Invalid command";
         if(!isValidPlatformName(platformName)) return "(-)|Invalid platform name";

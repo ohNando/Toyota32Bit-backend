@@ -4,11 +4,12 @@ import java.io.*;
 import java.net.*;
 import java.util.Properties;
 
-public class ServerHandler implements Runnable{
+public class ServerHandler extends Thread {
     private final Socket socket;
     private final Properties properties;
     private PrintWriter output;
     private RateDataProducer dataProducer;
+    //private volatile boolean isRunning = true;
 
     ServerHandler(Socket socket, Properties properties) {
         this.socket = socket;
@@ -16,45 +17,41 @@ public class ServerHandler implements Runnable{
     }
 
     @Override
-    public void run(){
-        try(BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter output = new PrintWriter(socket.getOutputStream(),true)
-        ){
+    public void run() {
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter output = new PrintWriter(socket.getOutputStream(), true)
+        ) {
             CommandController commandController = new CommandController(properties);
             this.output = output;
             String receivedMessage;
 
-            while((receivedMessage = input.readLine()) != null){
+            while ((receivedMessage = input.readLine()) != null) {
                 String checkedMessage = commandController.checkCommand(receivedMessage);
 
-                if(!checkedMessage.equals("OK")){
+                if (!checkedMessage.equals("OK")) {
                     output.println(checkedMessage);
-                }else{
+                } else {
                     String commandName = commandController.getCommandName(receivedMessage);
                     String currencyRate = commandController.getCurrencyRate(receivedMessage);
-                    if(commandName.equals("subscribe")){
-                        output.println("(+)|subscribed to " + currencyRate);
+
+                    if (commandName.equals("subscribe")) {
                         dataProducer = new RateDataProducer(properties);
-                        new Thread(()->dataProducer.subscribe(currencyRate,output)).start();
-                    }
-                    else{
-                        output.println("(+)|unsubscribed from " + currencyRate);
-                        if(dataProducer != null){
-                            dataProducer.unsubscribe(currencyRate);
+                        dataProducer.subscribe(currencyRate.trim(), output);
+                    } else if(commandName.equals("unsubscribe")) {
+                        if (dataProducer != null) {
+                            dataProducer.unsubscribe(currencyRate.trim(),output);
                         }
                     }
                 }
             }
-        }catch (IOException error){
+        } catch (IOException error) {
             error.printStackTrace();
-        }finally{
-            try{
+        } finally {
+            try {
                 socket.close();
-            }catch (IOException error){
+            } catch (IOException error) {
                 error.printStackTrace();
             }
         }
     }
-
-
 }
