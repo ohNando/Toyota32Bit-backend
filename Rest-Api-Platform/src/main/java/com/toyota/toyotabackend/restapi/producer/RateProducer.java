@@ -43,6 +43,6 @@ public class RateProducer {
     }
 
     private Double updateRate(Double baseRate) {
-        return baseRate + (baseRate * random.nextDouble() * 0.1 - 0.05);
+        return baseRate + (baseRate * random.nextDouble() * 0.1 + 0.05);
     }
 }

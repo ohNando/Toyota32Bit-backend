@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/rates")
 public class RateController {
-    private RateService rateService;
-
+    private final RateService rateService;
+    
     @GetMapping(path = "/{rateName}")
     public RateDto getRates(@PathVariable String rateName){
         return rateService.getRate(rateName);

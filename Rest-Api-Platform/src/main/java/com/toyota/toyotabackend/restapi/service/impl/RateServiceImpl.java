@@ -22,6 +22,7 @@ public class RateServiceImpl implements RateService {
     public RateDto getRate(String receivedMessage) {
         CommandParser parser = new CommandParserImpl();
         String checkedMessage = parser.checkCommand(receivedMessage);
+
         if(checkedMessage.equals("OK")){
             String rateName = parser.getRate(receivedMessage);
             Map<String,Double> rates = rateProducer.generateRates(rateName);
