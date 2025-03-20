@@ -1,25 +1,27 @@
 package com.toyota.toyotabackend.restapi.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
     @Value("${jwt.secret-key}")
-    private String secretKey;
-
+    private String secret;
     @Value("${jwt.expiration-time}")
     private long expirationTime;
+    private SecretKey key;
 
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+    @PostConstruct
+    public void init(){
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String username) {
@@ -27,12 +29,29 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSigningKey())
+                .signWith(key)
                 .compact();
     }
 
-    public Claims getClaimsFromToken(String token) {
-        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getBody().getSubject();
     }
+
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        }catch (SecurityException error){
+            System.out.println("Invalid JWT Signature : " + error.getMessage());
+        }catch (MalformedJwtException error){
+            System.out.println("Invalid JWT Token : " + error.getMessage());
+        }catch (ExpiredJwtException error){
+            System.out.println("JWT Token is expired : " + error.getMessage());
+        }catch (IllegalArgumentException error){
+            System.out.println("JWT Token is null : " + error.getMessage());
+        }
+        return false;
+    }
+
 
 }

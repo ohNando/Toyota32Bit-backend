@@ -3,17 +3,26 @@ package com.toyota.toyotabackend.restapi.service.impl;
 import com.toyota.toyotabackend.restapi.exception.UserNotFoundException;
 import com.toyota.toyotabackend.restapi.service.LoginDetailService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Primary
 @Service
 public class LoginDetailServiceImpl implements LoginDetailService {
     @Value("${login.user.username}")
     private String username_login;
-
     @Value("${login.user.password}")
     private String password_login;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public LoginDetailServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) {
         if(!username.equals(username_login)) {
@@ -21,7 +30,8 @@ public class LoginDetailServiceImpl implements LoginDetailService {
         }
         return User.builder()
                 .username(username_login)
-                .password("{noop}" + password_login)
+                .password(passwordEncoder.encode(password_login))
+                .roles("USER")
                 .build();
     }
 }
