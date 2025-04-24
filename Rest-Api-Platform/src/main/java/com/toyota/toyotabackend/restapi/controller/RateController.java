@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RateController {
     private final RateService rateService;
     
-    @GetMapping(path = "/{rateName}")
+    @GetMapping(path = "/{rateN ame}")
     public RateDto getRates(@PathVariable String rateName){
         return rateService.getRate(rateName).getBody();
     }

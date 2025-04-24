@@ -6,7 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
-public class ServerApp {
+public class ServerMain {
     public static void main(String[] args) {
         Properties properties = new Properties();
         String configFilePath = System.getProperty("user.dir") + "/src/config.properties";
