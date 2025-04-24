@@ -1,5 +1,9 @@
 package Server;
 
+import Server.Auth.LoginHandler;
+import Server.Parser.CommandController;
+import Server.Producer.RateDataProducer;
+
 import java.io.*;
 import java.net.*;
 import java.util.Properties;
@@ -9,7 +13,6 @@ public class ServerHandler extends Thread {
     private final Properties properties;
     private PrintWriter output;
     private RateDataProducer dataProducer;
-    //private volatile boolean isRunning = true;
 
     ServerHandler(Socket socket, Properties properties) {
         this.socket = socket;
@@ -21,8 +24,14 @@ public class ServerHandler extends Thread {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter output = new PrintWriter(socket.getOutputStream(), true)
         ) {
-            CommandController commandController = new CommandController(properties);
             this.output = output;
+            output.println("login|username|password");
+            if(!LoginHandler.authenticate(input,output,properties)) {    //Login
+                socket.close();
+                return;
+            }
+
+            CommandController commandController = new CommandController(properties);
             String receivedMessage;
 
             while ((receivedMessage = input.readLine()) != null) {

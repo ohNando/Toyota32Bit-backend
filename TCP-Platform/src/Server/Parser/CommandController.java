@@ -1,4 +1,4 @@
-package Server;
+package Server.Parser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Properties;
 public class CommandController {
     private final Properties properties;
 
-    CommandController(Properties properties){
+    public CommandController(Properties properties){
         this.properties = properties;
     }
 
@@ -57,15 +57,10 @@ public class CommandController {
         return "";
     }
 
-    String checkCommand(String receivedMessage){
+    public String checkCommand(String receivedMessage){
         String commandName = getCommandName(receivedMessage);
         String platformName = getPlatformName(receivedMessage);
         String currencyRate = getCurrencyRate(receivedMessage);
-
-        System.out.println("commandName: " + commandName);
-        System.out.println("platformName: " + platformName);
-        System.out.println("currencyRate: " + currencyRate);
-
 
         if(commandName.isEmpty()) return "(-)|Missing command";
         if(platformName.isEmpty()) return "(-)|Missing platform name";

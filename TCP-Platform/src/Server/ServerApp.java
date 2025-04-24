@@ -15,13 +15,10 @@ public class ServerApp {
             int port = Integer.parseInt(properties.getProperty("tcp-platform.server.port"));
 
             try(ServerSocket serverSocket = new ServerSocket(port)){
-                System.out.println("Server started on port " + port);
-                short clientCount = 0;
                 while(true){
                     try{
                         Socket socket = serverSocket.accept();
                         new Thread(new ServerHandler(socket,properties)).start();
-                        System.out.printf("Client %d connected\n",++clientCount);
                     }catch (IOException error){
                         System.out.println("(!)|client cannot connected" + error.getMessage());
                         break;
