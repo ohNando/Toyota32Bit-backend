@@ -14,7 +14,7 @@ public class HazelcastConfig {
                 .addMapConfig(
                         new MapConfig()
                                 .setName("rates")
-                                .setTimeToLiveSeconds(0)
+                                .setTimeToLiveSeconds(3600)
                 );
     }
 }

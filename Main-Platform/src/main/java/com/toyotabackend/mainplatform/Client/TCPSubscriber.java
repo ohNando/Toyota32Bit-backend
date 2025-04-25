@@ -119,7 +119,9 @@ public class TCPSubscriber extends Thread implements DataProvider { //Subscriber
             // Bu key, subscribe metodunda dinamik olarak oluşturuluyor
             String key = Thread.currentThread().getName();  // Thread ismini key olarak kullanabiliriz
             RateStatus status = RateStatus.AVAILABLE;
-
+            String[] parts = key.split("_");
+            String platformName = parts[0];
+            String rateName = parts[1];
             while (runningFlags.get(key)) {
                 String response = input.readLine();
                 if (response == null || response.isEmpty()) continue;  // Boş veya null veri geldiğinde atla
@@ -133,9 +135,10 @@ public class TCPSubscriber extends Thread implements DataProvider { //Subscriber
                 if (status == status.AVAILABLE) {
                     coordinator.onRateAvailable(key.split("_")[0], key.split("_")[1], dto);
                     status = status.UNAVAILABLE;  // Durumu değiştirme
+                    coordinator.onRateStatus(platformName, rateName, status);
                 } else {
-                    // Veri güncellemesi yap
                     coordinator.onRateUpdate(key.split("_")[0], key.split("_")[1], new RateFields(dto.getBid(), dto.getAsk(), dto.getRateUpdateTime()));
+                    coordinator.onRateStatus(platformName, rateName, status);
                 }
             }
         } catch (IOException e) {

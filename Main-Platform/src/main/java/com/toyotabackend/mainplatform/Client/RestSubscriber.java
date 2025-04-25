@@ -5,6 +5,8 @@ import com.toyotabackend.mainplatform.Data_Provider.DataProvider;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Entity.RateFields;
 import com.toyotabackend.mainplatform.Entity.RateStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +24,8 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
     private Map<String, Boolean> subscriptionFlags = new ConcurrentHashMap<>();
     private Map<String, Thread> subscriptionThreads = new ConcurrentHashMap<>();
 
+    Logger logger = LoggerFactory.getLogger(RestSubscriber.class);
+
     public RestSubscriber(Coordinator coordinator) {
         this.coordinator = coordinator;
         this.restTemplate = new RestTemplate();
@@ -30,7 +34,7 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
     @Override
     public Boolean connect(String platformName, String username, String password) {
         if(!platformName.equals("PF2")){
-            System.out.println("(-)|Invalid Platform Name!");
+            logger.warn("Invalid platform name: " + platformName);
             return false;
         }
         String request = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
@@ -43,14 +47,14 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
             String responseStatus = response.getStatusCode().toString();
 
             if(responseStatus.equals("200")){   //OK
-                System.out.println("(+)|Successfully connected to the server!");
+                logger.info("Successfully connected to {} with username {}", baseUrl, username);
                 return true;
             }else{
-                System.out.println("(-)|Failed to connect to the server with status code: " + responseStatus);
+                logger.warn("Failed to connect to {} with username {}", baseUrl, username);
                 return false;
             }
         }catch (Exception e){
-            System.out.println("(!)|Error during login " + e.getMessage());
+            logger.warn("Failed to connect to {} with username {}", baseUrl, username);
             return false;
         }
     }
@@ -58,17 +62,17 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
     @Override
     public Boolean disConnect(String platformName, String username, String password) {
         if(!platformName.equals("PF2")){
-            System.out.println("(-)|Invalid Platform Name!");
+            logger.warn("Invalid platform name: " + platformName);
             return false;
         }
-        System.out.println("(+)|Successfully disconnected from the server!");
+        logger.info("Disconnecting from {} with username {}", baseUrl, username);
         return true;
     }
 
     @Override
     public void subscribe(String platformName, String rateName) {
         if (!platformName.equals("PF2")) {
-            System.out.println("(-)|Invalid Platform Name!");
+            logger.warn("Invalid platform name: " + platformName);
             return;
         }
 
@@ -93,7 +97,7 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
             try {
                 thread.join(1000);
             } catch (InterruptedException e) {
-                System.out.println("(!)|Error during thread join: " + e.getMessage());
+                logger.warn("Failed to join subscription thread");
             }
             subscriptionThreads.remove(key);
         }
@@ -119,16 +123,18 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
                             if (status == status.AVAILABLE) {
                                 coordinator.onRateAvailable(platformName, rateName, dto);
                                 status = status.UNAVAILABLE;
+                                coordinator.onRateStatus(platformName, rateName, status);
                             } else {
                                 coordinator.onRateUpdate(platformName, rateName, new RateFields(dto.getBid(), dto.getAsk(), dto.getRateUpdateTime()));
+                                coordinator.onRateStatus(platformName, rateName, status);
                             }
                         }
                         Thread.sleep(1000);
                     } catch (Exception e) {
-                        System.out.println("(!)|REST polling error: " + e.getMessage());
+                        logger.warn("Failed to connect to {} with username {}", baseUrl, key);
                     }
                 }
-                System.out.println("(i)|Stopped polling for " + key);
+                logger.info("Subscribed to {} with username {}", baseUrl, key);
             }
         }
     }

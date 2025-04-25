@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class RateFields {
-    private double bid;
-    private double ask;
+    private float bid;
+    private float ask;
     private String timestamp;
 }
