@@ -1,10 +1,15 @@
     package com.toyotabackend.mainplatform.Entity;
 
     import jakarta.persistence.*;
-    import lombok.*;
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.Setter;
 
     @Getter
     @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Entity
     @Table(name = "rate")
     public class Rate {
@@ -19,11 +24,4 @@
         private float ask;
         @Column(nullable = false)
         private String rateUpdateTime;
-
-        public Rate(String _rateName,float _bid,float _ask,String _rateUpdateTime){
-            this.rateName = _rateName;
-            this.bid = _bid;
-            this.ask = _ask;
-            this.rateUpdateTime = _rateUpdateTime;
-        }
     }
