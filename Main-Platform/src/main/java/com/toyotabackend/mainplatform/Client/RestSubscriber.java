@@ -14,71 +14,110 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RestSubscriber extends Thread implements DataProvider {  //Subscriber 1
-    Coordinator coordinator;
+/**
+ * RestSubscriber is a data provider implementation that fetches rate information
+ * from a REST API based on a subscription model. It runs in a separate thread and
+ * repeatedly polls the API for updates for subscribed rate names.
+ *
+ * This class is specifically designed to work with platform "PF2".
+ */
+public class RestSubscriber extends Thread implements DataProvider {
+
+    private final Coordinator coordinator;
+    private final RestTemplate restTemplate;
+    private final Map<String, Boolean> subscriptionFlags = new ConcurrentHashMap<>();
+    private final Map<String, Thread> subscriptionThreads = new ConcurrentHashMap<>();
+
+    private static final Logger logger = LoggerFactory.getLogger(RestSubscriber.class);
+
     @Value("${client.Rest_Api.baseUrl}")
     private String baseUrl;
+
     @Value("${client.Rest_Api.loginUrl}")
     private String loginUrl;
-    private RestTemplate restTemplate;
-    private Map<String, Boolean> subscriptionFlags = new ConcurrentHashMap<>();
-    private Map<String, Thread> subscriptionThreads = new ConcurrentHashMap<>();
 
-    Logger logger = LoggerFactory.getLogger(RestSubscriber.class);
-
+    /**
+     * Constructs a new RestSubscriber with a reference to the Coordinator
+     * to receive rate updates and status notifications.
+     *
+     * @param coordinator the coordinator that handles callbacks
+     */
     public RestSubscriber(Coordinator coordinator) {
         this.coordinator = coordinator;
         this.restTemplate = new RestTemplate();
     }
 
+    /**
+     * Attempts to authenticate the subscriber with the REST API using the provided
+     * platform name, username, and password.
+     *
+     * @param platformName the platform identifier (must be "PF2")
+     * @param username     the username for login
+     * @param password     the password for login
+     * @return true if login is successful, false otherwise
+     */
     @Override
     public Boolean connect(String platformName, String username, String password) {
-        if(!platformName.equals("PF2")){
-            logger.warn("Invalid platform name: " + platformName);
+        if (!platformName.equals("PF2")) {
+            logger.warn("Invalid platform name: {}", platformName);
             return false;
         }
+
         String request = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
-        try{
+
+        try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+            HttpEntity<String> entity = new HttpEntity<>(request, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(loginUrl, HttpMethod.POST, entity, String.class);
-            String responseStatus = response.getStatusCode().toString();
-
-            if(responseStatus.equals("200")){   //OK
+            if (response.getStatusCode() == HttpStatus.OK) {
                 logger.info("Successfully connected to {} with username {}", baseUrl, username);
                 return true;
-            }else{
+            } else {
                 logger.warn("Failed to connect to {} with username {}", baseUrl, username);
                 return false;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.warn("Failed to connect to {} with username {}", baseUrl, username);
             return false;
         }
     }
 
+    /**
+     * Disconnects from the platform. Currently, this method just logs the disconnection.
+     *
+     * @param platformName the platform identifier
+     * @param username     the username
+     * @param password     the password
+     * @return true always, unless platform name is invalid
+     */
     @Override
     public Boolean disConnect(String platformName, String username, String password) {
-        if(!platformName.equals("PF2")){
-            logger.warn("Invalid platform name: " + platformName);
+        if (!platformName.equals("PF2")) {
+            logger.warn("Invalid platform name: {}", platformName);
             return false;
         }
+
         logger.info("Disconnecting from {} with username {}", baseUrl, username);
         return true;
     }
 
+    /**
+     * Subscribes to rate updates for the specified platform and rate name.
+     * Starts a new thread to fetch data continuously.
+     *
+     * @param platformName the platform identifier
+     * @param rateName     the rate name to subscribe to
+     */
     @Override
     public void subscribe(String platformName, String rateName) {
         if (!platformName.equals("PF2")) {
-            logger.warn("Invalid platform name: " + platformName);
+            logger.warn("Invalid platform name: {}", platformName);
             return;
         }
 
         String key = platformName + "_" + rateName;
-        String url = baseUrl + key;
-
         subscriptionFlags.put(key, true);
 
         Thread thread = new Thread(this);
@@ -87,6 +126,13 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
         thread.start();
     }
 
+    /**
+     * Unsubscribes from a specific rate by setting its subscription flag to false
+     * and interrupting the associated thread.
+     *
+     * @param platformName the platform identifier
+     * @param rateName     the rate name to unsubscribe from
+     */
     @Override
     public void unSubscribe(String platformName, String rateName) {
         String key = platformName + "_" + rateName;
@@ -103,6 +149,10 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
         }
     }
 
+    /**
+     * The main run loop that performs polling of rate data for all active subscriptions.
+     * It sends rate updates and availability status to the coordinator.
+     */
     @Override
     public void run() {
         for (Map.Entry<String, Boolean> entry : subscriptionFlags.entrySet()) {
@@ -120,21 +170,22 @@ public class RestSubscriber extends Thread implements DataProvider {  //Subscrib
                         ResponseEntity<RateDto> response = restTemplate.getForEntity(url, RateDto.class);
                         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                             RateDto dto = response.getBody();
-                            if (status == status.AVAILABLE) {
+                            if (status == RateStatus.AVAILABLE) {
                                 coordinator.onRateAvailable(platformName, rateName, dto);
-                                status = status.UNAVAILABLE;
+                                status = RateStatus.UNAVAILABLE;
                                 coordinator.onRateStatus(platformName, rateName, status);
                             } else {
-                                coordinator.onRateUpdate(platformName, rateName, new RateFields(dto.getBid(), dto.getAsk(), dto.getRateUpdateTime()));
+                                coordinator.onRateUpdate(platformName, rateName,
+                                        new RateFields(dto.getBid(), dto.getAsk(), dto.getRateUpdateTime()));
                                 coordinator.onRateStatus(platformName, rateName, status);
                             }
                         }
                         Thread.sleep(1000);
                     } catch (Exception e) {
-                        logger.warn("Failed to connect to {} with username {}", baseUrl, key);
+                        logger.warn("Failed to connect to {} for rate {}", baseUrl, key);
                     }
                 }
-                logger.info("Subscribed to {} with username {}", baseUrl, key);
+                logger.info("Unsubscribed from {} for rate {}", baseUrl, key);
             }
         }
     }

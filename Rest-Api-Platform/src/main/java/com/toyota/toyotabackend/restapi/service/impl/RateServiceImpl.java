@@ -14,12 +14,26 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Service implementation for handling rate-related operations such as retrieving the rates for a given currency.
+ * <p>
+ * This service performs rate generation, validation of commands, and returns the rate data in the form of a {@link RateDto}.
+ * </p>
+ */
 @Service
 @AllArgsConstructor
 public class RateServiceImpl implements RateService {
     private final RateProducer rateProducer;
     private final CommandParser parser;
 
+    /**
+     * Retrieves the rate for the specified currency from the received message.
+     *
+     * @param receivedMessage The message containing the requested rate and other parameters.
+     * @return A {@link ResponseEntity} containing a {@link RateDto} with the rate data (bid, ask, and timestamp).
+     * @throws CommandNotValidException If the command is invalid (e.g., missing or incorrect rate).
+     * @throws RateNotFoundException If the rate cannot be found for the specified currency.
+     */
     @Override
     public ResponseEntity<RateDto> getRate(String receivedMessage) {
         String checkedMessage = parser.checkCommand(receivedMessage);
@@ -38,6 +52,6 @@ public class RateServiceImpl implements RateService {
         double bid = rates.get("bid");
         double ask = rates.get("ask");
 
-        return ResponseEntity.ok(new RateDto(rateName,bid,ask,LocalDateTime.now().toString()));
+        return ResponseEntity.ok(new RateDto(rateName, bid, ask, LocalDateTime.now().toString()));
     }
 }
