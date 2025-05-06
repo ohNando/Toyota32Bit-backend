@@ -2,11 +2,10 @@ package com.toyotabackend.mainplatform.Coordinator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.toyotabackend.mainplatform.ClassLoader.LoadSubscriberClass;
-import com.toyotabackend.mainplatform.Data_Provider.DataProvider;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Entity.RateFields;
 import com.toyotabackend.mainplatform.Entity.RateStatus;
-import com.toyotabackend.mainplatform.Hazelcast.HazelcastCacheService;
+import com.toyotabackend.mainplatform.Cache.HazelcastCache;
 import com.toyotabackend.mainplatform.Kafka.KafkaConsumer;
 import com.toyotabackend.mainplatform.Kafka.KafkaProducer;
 import com.toyotabackend.mainplatform.RateCallback.RateCallback;
@@ -27,7 +26,7 @@ import java.util.List;
  * handles callbacks, sends data to Kafka, and stores it in Hazelcast cache.
  */
 @Component
-public class Coordinator extends Thread implements RateCallback {
+public class Coordinator extends Thread implements CoordinatorInterface {
 
     @Value("${rate.server.tcp.jarPath}")
     private String tcpJarPath;
@@ -51,8 +50,6 @@ public class Coordinator extends Thread implements RateCallback {
     private final KafkaConsumer kafkaConsumer;
     private final KafkaProducer kafkaProducer;
 
-    @Autowired
-    private HazelcastCacheService cacheService;
 
     private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
 
@@ -159,11 +156,9 @@ public class Coordinator extends Thread implements RateCallback {
      * Starts subscription for the given platform and all defined rates.
      *
      * @param platformName the platform to subscribe to
-     * @param username     the username for authentication
-     * @param password     the password for authentication
      * @throws IOException if subscription fails
      */
-    private void subscriber(String platformName, String username, String password) throws IOException {
+    private void subscriber(String platformName) throws IOException {
         logger.info("Starting subscription for platform: {}", platformName);
         for (DataProvider dataProvider : dataProviders) {
             for (String rateName : rateNames) {
@@ -184,7 +179,8 @@ public class Coordinator extends Thread implements RateCallback {
     public void run() {
         logger.info("Coordinator thread running.");
         try {
-            subscriber("PF2", "admin", "12345");
+            subscriber("PF1");
+            subscriber("PF2");
             kafkaConsumer.listen("rates");
         } catch (IOException e) {
             logger.error("Error occurred while running Coordinator thread", e);

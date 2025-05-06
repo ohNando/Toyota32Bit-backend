@@ -1,6 +1,11 @@
 package com.toyotabackend.mainplatform.Entity;
 
 import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.time.Instant;
+
+import org.hibernate.annotations.UpdateTimestamp;
+
 import lombok.*;
 
 /**
@@ -43,7 +48,11 @@ public class Rate {
      * Timestamp indicating the last time this rate was updated. Cannot be null.
      */
     @Column(nullable = false)
-    private String rateUpdateTime;
+    private Instant rateUpdateTime;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp dbUpdateTime;
 
     /**
      * Constructor for creating a Rate object with all required fields.
@@ -53,11 +62,12 @@ public class Rate {
      * @param _ask            the ask price
      * @param _rateUpdateTime the time the rate was last updated
      */
-    public Rate(String _rateName, float _bid, float _ask, String _rateUpdateTime) {
+    public Rate(String _rateName, float _bid, float _ask, Instant _rateUpdateTime,Timestamp _dbUpdateTme) {
         this.rateName = _rateName;
         this.bid = _bid;
         this.ask = _ask;
         this.rateUpdateTime = _rateUpdateTime;
+        this.dbUpdateTime = _dbUpdateTme;
     }
 
     // Default constructor (required by JPA)

@@ -1,9 +1,9 @@
 package com.toyotabackend.mainplatform.Dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.Instant;
 
 /**
  * Data Transfer Object (DTO) representing a rate with bid and ask prices,
@@ -14,8 +14,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class RateDto {
 
     /**
@@ -36,5 +34,16 @@ public class RateDto {
     /**
      * The timestamp when the rate was last updated, in ISO-8601 format.
      */
-    private String rateUpdateTime;
+    private Instant timestamp;
+
+    private RateStatus status;
+    public RateDto() {};
+
+    public RateDto(String _rateName,float _bid,float _ask,Instant _timestamp){
+        this.setRateName(_rateName);
+        this.setAsk(_ask);
+        this.setBid(_bid);
+        this.setTimestamp(_timestamp);
+        this.setStatus(RateStatus.NOT_AVAILABLE);
+    }
 }
