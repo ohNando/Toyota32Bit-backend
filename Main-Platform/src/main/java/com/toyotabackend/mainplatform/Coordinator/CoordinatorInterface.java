@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.toyotabackend.mainplatform.Dto.RateDto;
-import com.toyotabackend.mainplatform.Entity.RateFields;
-import com.toyotabackend.mainplatform.Entity.RateStatus;
+import com.toyotabackend.mainplatform.Dto.RateStatus;
 
 /**
  * Callback interface to handle events related to rate data.
@@ -50,7 +49,7 @@ public interface CoordinatorInterface {
      * @param rateFields   the updated rate fields containing the new bid/ask values
      * @throws JsonProcessingException if an error occurs during the processing of the rate update
      */
-    void onRateUpdate(String platformName, String rateName, RateFields rateFields) throws JsonProcessingException;
+    void onRateUpdate(String platformName, String rateName, RateDto dto);
 
     /**
      * Called when the status of a rate changes (e.g., available, unavailable, or error).
@@ -59,5 +58,5 @@ public interface CoordinatorInterface {
      * @param rateName     the name of the rate
      * @param rateStatus   the updated status of the rate
      */
-    void onRateStatus(String platformName, String rateName, RateStatus rateStatus);
+    RateStatus onRateStatus(String platformName, String rateName);
 }

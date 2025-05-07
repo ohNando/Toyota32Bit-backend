@@ -5,14 +5,17 @@ import com.toyotabackend.mainplatform.AuthEntity.UserAuth;
 import com.toyotabackend.mainplatform.Client.SubscriberInterface;
 import com.toyotabackend.mainplatform.Coordinator.CoordinatorInterface;
 import com.toyotabackend.mainplatform.Dto.RateDto;
+import com.toyotabackend.mainplatform.Dto.RateStatus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +117,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * @return true always, unless platform name is invalid
      */
     @Override
-    public void disConnect(String platformName, String username, String password) {
+    public void disConnect(String platformName, String username, String password){
         if (!platformName.equals("PF2")) {
             logger.warn("Invalid platform name: {}", platformName);
             this.connectionStatus = false;
@@ -203,6 +206,31 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                     }
                 }
 
+                if(!successful){
+                    logger.error("Unable to get data for {} after 5 retries",rateName);
+                    continue;
+                }
+
+                RateDto dto = response.getBody();
+                switch (coordinator.onRateStatus("PF2",dto.getRateName())) {
+                    case RateStatus.NOT_AVAILABLE:
+                        coordinator.onRateAvailable("PF2", dto.getRateName(), dto);
+                        break;
+                    case RateStatus.AVAILABLE:
+                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
+                        break;
+                    case RateStatus.UPDATED:
+                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
+                        break;
+                }
+
+
+            }
+
+            try{
+                Thread.sleep(1000);
+            }catch(InterruptedException e){
+                logger.error("PF2 subscriber Error : {}",e.getMessage());
             }
         }
     }

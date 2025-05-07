@@ -1,5 +1,7 @@
 package com.toyotabackend.mainplatform.Mapper;
 
+import java.time.Instant;
+
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Entity.Rate;
 
@@ -18,12 +20,13 @@ public class RateMapper {
      * @return a {@link RateDto} containing the same data as the {@link Rate} entity
      */
     public static RateDto mapToRateDto(Rate rate) {
-        return new RateDto(
-                rate.getRateName(),
-                rate.getBid(),
-                rate.getAsk(),
-                rate.getRateUpdateTime()
-        );
+        RateDto dto = new RateDto();
+        dto.setRateName(rate.rateName);
+        dto.setAsk(rate.ask);
+        dto.setBid(rate.bid);
+        dto.setTimestamp(rate.rateUpdateTime);
+
+        return dto;
     }
 
     /**
@@ -33,11 +36,30 @@ public class RateMapper {
      * @return a {@link Rate} entity containing the same data as the {@link RateDto}
      */
     public static Rate mapToRate(RateDto dto) {
-        return new Rate(
-                dto.getRateName(),
-                dto.getBid(),
-                dto.getAsk(),
-                dto.getRateUpdateTime()
-        );
+        Rate rate = new Rate();
+        rate.rateName = dto.getRateName();
+        rate.bid = dto.getBid();
+        rate.ask = dto.getAsk();
+        rate.rateUpdateTime = dto.getTimestamp();
+
+        return rate;
+    }
+
+    public static RateDto stringToDTO(String response){
+        String[] parts = response.split("\\|");
+        String rateName = parts[0];
+        float bid = Float.parseFloat(parts[1]);
+        float ask = Float.parseFloat(parts[2]);
+        Instant timestamp = Instant.parse(parts[3]);
+        return new RateDto(rateName,bid,ask,timestamp);
+    }
+
+    public static String rateToString(RateDto dto){
+        String rateName = dto.getRateName();
+        String bid = Float.toString(dto.getBid());
+        String ask = Float.toString(dto.getAsk());
+        String timestamp = dto.getTimestamp().toString();
+        String key = rateName + "|" + bid + "|" + ask + "|" + timestamp;
+        return key;
     }
 }

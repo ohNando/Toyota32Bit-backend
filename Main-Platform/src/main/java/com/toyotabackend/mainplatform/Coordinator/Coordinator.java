@@ -1,23 +1,23 @@
 package com.toyotabackend.mainplatform.Coordinator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.toyotabackend.mainplatform.ClassLoader.LoadSubscriberClass;
+import com.toyotabackend.mainplatform.Client.SubscriberInterface;
 import com.toyotabackend.mainplatform.Dto.RateDto;
-import com.toyotabackend.mainplatform.Entity.RateFields;
-import com.toyotabackend.mainplatform.Entity.RateStatus;
+import com.toyotabackend.mainplatform.Dto.RateStatus;
+import com.toyotabackend.mainplatform.Kafka.Kafka;
+import com.toyotabackend.mainplatform.RateCalculator.RateCalculatorService;
+import com.toyotabackend.mainplatform.RateService.DatabaseService;
+import com.toyotabackend.mainplatform.RateService.RateService;
 import com.toyotabackend.mainplatform.Cache.HazelcastCache;
-import com.toyotabackend.mainplatform.Kafka.KafkaConsumer;
-import com.toyotabackend.mainplatform.Kafka.KafkaProducer;
-import com.toyotabackend.mainplatform.RateCallback.RateCallback;
-import jakarta.annotation.PostConstruct;
+
+import org.apache.catalina.core.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,33 +25,30 @@ import java.util.List;
  * It manages the lifecycle of data providers, processes rate data,
  * handles callbacks, sends data to Kafka, and stores it in Hazelcast cache.
  */
-@Component
-public class Coordinator extends Thread implements CoordinatorInterface {
 
-    @Value("${rate.server.tcp.jarPath}")
-    private String tcpJarPath;
+public class Coordinator extends Thread implements CoordinatorInterface, AutoCloseable {
+    @Value("${rate.rawRates}")
+    private String[] rawRateNames;
+    private String[] calculatedRateNames;
+    private String[] subscribedRateNames;
+    private String[] subscriberNames;
 
-    @Value("${rate.server.tcp.mainPath}")
-    private String tcpMainPath;
+    private final HashMap<String,RateStatus> rateStatusMap;
+    private final HashMap<String, SubscriberInterface> subscriberMap;
 
-    @Value("${rate.server.rest.jarPath}")
-    private String restJarPath;
+    private final HazelcastCache rateCache;
+    private final Kafka kafka;
+    private final DatabaseService database;
+    private static final Logger logger = LoggerFactory.getLogger("CoordinatorLogger");
 
-    @Value("${rate.server.rest.mainPath}")
-    private String restMainPath;
+    private final RateCalculatorService calculator;
+    private final RateService rateService;
 
-    @Value("${rate.names}")
-    private List<String> rateNames;
-
-    @Lazy
-    @Autowired
-    private List<DataProvider> dataProviders;
-
-    private final KafkaConsumer kafkaConsumer;
-    private final KafkaProducer kafkaProducer;
-
-
-    private static final Logger logger = LoggerFactory.getLogger(Coordinator.class);
+    @Value("${login.username}")
+    private String username;
+    
+    @Value("${login.password}")
+    private String password;
 
     /**
      * Constructs the Coordinator with required Kafka producer and consumer.
@@ -60,10 +57,8 @@ public class Coordinator extends Thread implements CoordinatorInterface {
      * @param kafkaProducer the Kafka producer to send rate data
      * @throws Exception in case of initialization errors
      */
-    @Autowired
-    public Coordinator(KafkaConsumer kafkaConsumer, KafkaProducer kafkaProducer) throws Exception {
-        this.kafkaConsumer = kafkaConsumer;
-        this.kafkaProducer = kafkaProducer;
+    public Coordinator(ApplicationContext applicationContext) throws Exception {
+       logger.info("Initializing coordinator");
     }
 
     /**
@@ -71,12 +66,6 @@ public class Coordinator extends Thread implements CoordinatorInterface {
      *
      * @throws Exception if the classes cannot be loaded
      */
-    @PostConstruct
-    public void init() throws Exception {
-        logger.info("Coordinator is starting, loading subscriber classes...");
-        LoadSubscriberClass.loadSubscriber();
-        logger.info("Subscriber classes loaded successfully.");
-    }
 
     /**
      * Callback indicating a successful connection to a platform.

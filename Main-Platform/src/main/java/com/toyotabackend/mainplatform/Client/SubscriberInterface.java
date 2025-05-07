@@ -3,7 +3,6 @@ package com.toyotabackend.mainplatform.Client;
 import java.io.IOException;
 
 import com.toyotabackend.mainplatform.Coordinator.CoordinatorInterface;
-import com.toyotabackend.mainplatform.RateCallback.RateCallback;
 
 public interface SubscriberInterface {
     /**

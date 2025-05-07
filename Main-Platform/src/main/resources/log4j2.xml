@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appanders>
+        <Console>
+            <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
+        </Console>
+    </Appanders>
+</Configuration>

@@ -6,15 +6,11 @@ import java.time.Instant;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
-import lombok.*;
-
 /**
  * Entity class representing a rate record stored in the database.
  * <p>
  * Maps to the "rate" table and holds bid/ask prices and the update timestamp.
  */
-@Getter
-@Setter
 @Entity
 @Table(name = "rate")
 public class Rate {
@@ -24,31 +20,31 @@ public class Rate {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    public long id;
 
     /**
      * Unique name of the rate (e.g., USDTRY). Cannot be null.
      */
     @Column(unique = true, nullable = false, length = 10)
-    private String rateName;
+    public String rateName;
 
     /**
      * The bid price for the rate. Cannot be null.
      */
     @Column(nullable = false)
-    private float bid;
+    public float bid;
 
     /**
      * The ask price for the rate. Cannot be null.
      */
     @Column(nullable = false)
-    private float ask;
+    public float ask;
 
     /**
      * Timestamp indicating the last time this rate was updated. Cannot be null.
      */
     @Column(nullable = false)
-    private Instant rateUpdateTime;
+    public Instant rateUpdateTime;
 
     @UpdateTimestamp
     @Column(nullable = false)
