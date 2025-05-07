@@ -2,7 +2,6 @@ package com.toyotabackend.mainplatform.Coordinator;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 
@@ -22,7 +21,7 @@ public interface CoordinatorInterface {
      * @param status       the connection status (true for connected, false for disconnected)
      * @throws IOException if an error occurs during the connection event handling
      */
-    void onConnect(String platformName, Boolean status) throws IOException;
+    void onConnect(String platformName, Boolean status);
 
     /**
      * Called when the connection to a platform is disconnected.

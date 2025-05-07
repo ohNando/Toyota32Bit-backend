@@ -1,5 +1,6 @@
 package com.toyota.toyotabackend.restapi.service;
 
+import com.toyota.toyotabackend.restapi.dto.ResponseDto;
 import com.toyota.toyotabackend.restapi.dto.UserDto;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,5 @@ public interface LoginService {
      * @param userDto The data transfer object containing the user's login credentials (username and password).
      * @return {@code true} if the user is authenticated, {@code false} otherwise.
      */
-    Boolean authenticate(UserDto userDto);
+    ResponseDto authenticate(UserDto userDto);  
 }

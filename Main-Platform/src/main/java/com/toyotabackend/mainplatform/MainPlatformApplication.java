@@ -1,7 +1,12 @@
 package com.toyotabackend.mainplatform;
 
+import java.io.IOException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+import com.toyotabackend.mainplatform.Coordinator.Coordinator;
 
 /**
  * The entry point of the Spring Boot application for the main platform.
@@ -20,8 +25,10 @@ public class MainPlatformApplication {
      *
      * @param args the command-line arguments passed to the application, which are
      *             forwarded to the Spring Boot context.
+     * @throws IOException If there is an issue starting the Spring Boot application or interacting with system resources.
      */
-    public static void main(String[] args) {
-        SpringApplication.run(MainPlatformApplication.class, args);
+    public static void main(String[] args) throws IOException {
+        // Run the Spring Boot application and initialize the Coordinator
+        Coordinator coordinator = new Coordinator((ApplicationContext) SpringApplication.run(MainPlatformApplication.class, args));
     }
 }

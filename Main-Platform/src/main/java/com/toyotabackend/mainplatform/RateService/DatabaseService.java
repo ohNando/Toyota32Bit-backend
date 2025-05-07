@@ -14,32 +14,53 @@ import com.toyotabackend.mainplatform.Entity.Rate;
 import com.toyotabackend.mainplatform.Mapper.RateMapper;
 import com.toyotabackend.mainplatform.Repository.RateRepository;
 
-@Component
+/**
+ * Service class responsible for interacting with the database to fetch and save rate data.
+ * The class provides methods to update rates in the database and fetch the latest rate for a given name.
+ */
+@Component("postgreSQL")
 public class DatabaseService {
+    
     @Autowired
     private RateRepository repository;
     private final Logger logger = LoggerFactory.getLogger("DatabaseLogger");
-    DatabaseService(){};
+    
+    /**
+     * Default constructor for DatabaseService.
+     */
+    DatabaseService() {}
 
-
-    public void updateRates(List<RateDto> dtoList){
+    /**
+     * Saves a list of RateDto objects into the database.
+     * This method maps the RateDto to the corresponding Rate entity and saves it using the repository.
+     * 
+     * @param dtoList List of RateDto objects to be saved.
+     */
+    public void updateRates(List<RateDto> dtoList) {
         logger.info("Rate saving is beginning...");
         List<Rate> rateList = new ArrayList<>();
-        for(RateDto dto : dtoList){
+        for (RateDto dto : dtoList) {
             rateList.add(RateMapper.mapToRate(dto));
         }
         repository.saveAll(rateList);
         logger.info("Rates are saved for database");
     }
 
-    public RateDto getLastestRate(String rateName){
-        logger.info("Last rate is fetching : ",rateName);
+    /**
+     * Fetches the latest rate from the database.
+     * This method retrieves the most recent rate from the database, sorted by the update timestamp.
+     * 
+     * @param rateName The name of the rate to be fetched.
+     * @return The latest rate as a RateDto, or null if no rate is found.
+     */
+    public RateDto getLastestRate(String rateName) {
+        logger.info("Last rate is fetching : {}", rateName);
         Optional<Rate> rate = repository.findTopByOrderByDbUpdateTimeDesc();
-        if(rate.isEmpty()){
-            logger.warn("Rate is not found : ",rateName);
+        if (rate.isEmpty()) {
+            logger.warn("Rate is not found : {}", rateName);
             return null;
         }
-        logger.info("Rate {} fetched from database",rateName);
+        logger.info("Rate {} fetched from database", rateName);
         return RateMapper.mapToRateDto(rate.get());
     }
 }

@@ -5,45 +5,36 @@ import java.lang.reflect.InvocationTargetException;
 import com.toyotabackend.mainplatform.Client.SubscriberInterface;
 
 /**
- * Class responsible for loading subscriber classes dynamically based on configuration.
+ * Utility class responsible for dynamically loading subscriber classes using reflection.
  * <p>
- * This class reads the class names of the subscribers from the application properties
- * and dynamically loads the subscriber classes using reflection. It is used to provide
- * flexibility in adding new subscriber implementations without modifying the code.
- * </p>
+ * Enables flexible integration of new subscriber implementations at runtime
+ * based on class names provided in the configuration.
  */
 public class LoadSubscriberClass {
-    private static final String subscriberClassPath = "com.toyotabackend.mainplatform.Client.";
-
 
     /**
-     * Loads the subscriber classes dynamically from the configuration.
-     * <p>
-     * This method reads the class names of two subscribers from the application properties
-     * file and then creates instances of those classes using reflection. The created instances
-     * are then cast to the {@link DataProvider} interface type.
-     * </p>
+     * Loads and instantiates a subscriber class at runtime using reflection.
+     *
+     * @param subscriberPath the fully qualified class name of the subscriber
+     * @param paramTypes the constructor parameter types
+     * @param params the constructor parameters
+     * @return an instance of {@link SubscriberInterface}
+     * @throws RuntimeException if the class cannot be loaded or instantiated
      */
-    public static SubscriberInterface loadSubscriber(String subscriberName,
-                                            Class<?>[] paramTypes,
-                                            Object[] params) {
-        Class<?> loadedClass = null;
+    public static SubscriberInterface loadSubscriber(String subscriberPath,
+                                                     Class<?>[] paramTypes,
+                                                     Object[] params) {
         try {
-            loadedClass = Class.forName(subscriberClassPath + subscriberName);
-        }catch(ClassNotFoundException exception){
-            throw new RuntimeException(exception);
-        }
-
-        try{
-            return (SubscriberInterface) loadedClass.getConstructor(paramTypes).newInstance();
-        }catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            Class<?> loadedClass = Class.forName(subscriberPath);
+            return (SubscriberInterface) loadedClass
+                    .getConstructor(paramTypes)
+                    .newInstance(params);
+        } catch (ClassNotFoundException |
+                 InstantiationException |
+                 IllegalAccessException |
+                 InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException("Failed to load subscriber class: " + subscriberPath, e);
         }
     }
 }

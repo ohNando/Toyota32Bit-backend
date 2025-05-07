@@ -1,5 +1,6 @@
 package com.toyota.toyotabackend.restapi.controller;
 
+import com.toyota.toyotabackend.restapi.dto.ResponseDto;
 import com.toyota.toyotabackend.restapi.dto.UserDto;
 import com.toyota.toyotabackend.restapi.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +20,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class LoginController {
 
-    private final LoginService loginService;
-
-    /**
-     * Constructs a LoginController with the provided LoginService.
-     *
-     * @param loginService The service used to authenticate users.
-     */
     @Autowired
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
-    }
+    private LoginService loginService;
 
     /**
      * Endpoint for user login.
@@ -43,15 +35,7 @@ public class LoginController {
      * @return A {@link ResponseEntity} containing the login status and message.
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody UserDto userDto) {
-        Map<String,String> response = new HashMap<>();
-
-        if (loginService.authenticate(userDto)) {
-            response.put("Message", "(+)|Login successful");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.put("Message", "(-)|Username or password incorrect");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseDto login(@RequestBody UserDto userDto) {
+        return loginService.authenticate(userDto);
     }
 }

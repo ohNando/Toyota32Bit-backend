@@ -2,6 +2,7 @@ package com.toyotabackend.mainplatform.Coordinator;
 
 import com.toyotabackend.mainplatform.ClassLoader.LoadSubscriberClass;
 import com.toyotabackend.mainplatform.Client.SubscriberInterface;
+import com.toyotabackend.mainplatform.Config.AppConfig;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 import com.toyotabackend.mainplatform.Kafka.Kafka;
@@ -10,7 +11,6 @@ import com.toyotabackend.mainplatform.RateService.DatabaseService;
 import com.toyotabackend.mainplatform.RateService.RateService;
 import com.toyotabackend.mainplatform.Cache.HazelcastCache;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,22 +18,25 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * Coordinator is the main orchestrator of the data collection system.
- * It manages the lifecycle of data providers, processes rate data,
- * handles callbacks, sends data to Kafka, and stores it in Hazelcast cache.
+ * The Coordinator class orchestrates the data collection process in the backend system.
+ * It is responsible for managing the lifecycle of subscribers, processing rate data,
+ * handling connection and disconnection events, sending data to Kafka, and storing data
+ * in the Hazelcast cache.
+ * <p>
+ * The Coordinator acts as a central component that connects to different platforms, collects rate data,
+ * and processes it for use in various services like Kafka and database updates.
+ * </p>
  */
-
 public class Coordinator extends Thread implements CoordinatorInterface, AutoCloseable {
-    @Value("${rate.rawRates}")
+    
     private String[] rawRateNames;
     private String[] calculatedRateNames;
     private String[] subscribedRateNames;
     private String[] subscriberNames;
 
-    private final HashMap<String,RateStatus> rateStatusMap;
+    private final HashMap<String, RateStatus> rateStatusMap;
     private final HashMap<String, SubscriberInterface> subscriberMap;
 
     private final HazelcastCache rateCache;
@@ -44,135 +47,246 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     private final RateCalculatorService calculator;
     private final RateService rateService;
 
-    @Value("${login.username}")
-    private String username;
-    
-    @Value("${login.password}")
-    private String password;
+    private final String username, password;
 
     /**
-     * Constructs the Coordinator with required Kafka producer and consumer.
+     * Constructs a new Coordinator instance and initializes the system by setting up required services,
+     * loading subscribers, and connecting to the platforms.
      *
-     * @param kafkaConsumer the Kafka consumer to listen to messages
-     * @param kafkaProducer the Kafka producer to send rate data
-     * @throws Exception in case of initialization errors
+     * @param applicationContext The Spring application context to access required beans
+     * @throws IOException If there are issues loading properties or subscribers
      */
-    public Coordinator(ApplicationContext applicationContext) throws Exception {
-       logger.info("Initializing coordinator");
+    public Coordinator(ApplicationContext applicationContext) throws IOException {
+        logger.info("Initializing coordinator");
+
+        // Load configuration from the application properties
+        this.subscriberNames = AppConfig.getSubscriberNames();
+        this.subscribedRateNames = AppConfig.getRawRates();
+        this.rawRateNames = AppConfig.getRawRates();
+        this.calculatedRateNames = AppConfig.getCalculatedRates();
+
+        // Initialize data structures and services
+        this.rateStatusMap = new HashMap<>();
+        for (String rawRate : rawRateNames) {
+            for (String subscriberName : subscriberNames) {
+                rateStatusMap.put(subscriberName + "_" + rawRate, RateStatus.NOT_AVAILABLE);
+            }
+        }
+        this.subscriberMap = new HashMap<>();
+        this.kafka = new Kafka();
+        this.database = applicationContext.getBean("postgreSQL", DatabaseService.class);
+        this.rateCache = new HazelcastCache();
+        this.rateService = new RateService(this.rateCache, this.database, this.rawRateNames, this.calculatedRateNames);
+        this.calculator = new RateCalculatorService(this.rateService, this.rawRateNames, AppConfig.getDerivedRates());
+
+        // Load and initialize TCP and REST subscribers
+        this.TCPLoader();
+        this.RestLoader();
+
+        // Load user credentials and connect to platforms
+        this.username = AppConfig.getUsername();
+        this.password = AppConfig.getPassword();
+        this.Connector(this.username, this.password);
+
+        logger.info("Coordinator initialized");
+        this.start();
     }
 
     /**
-     * Initializes the system by dynamically loading subscriber classes using reflection.
+     * Loads and registers the TCP subscriber by dynamically loading the subscriber class.
      *
-     * @throws Exception if the classes cannot be loaded
+     * @throws IOException If there is an issue loading the TCP subscriber configuration
      */
+    private void TCPLoader() throws IOException {
+        String subscriberName = AppConfig.getTCPSubscriberName();
+        String serverAddress = AppConfig.getTCPAddress();
+        int serverPort = AppConfig.getTCPPort();
+        String classPath = AppConfig.getTCPClassPath();
 
-    /**
-     * Callback indicating a successful connection to a platform.
-     *
-     * @param platformName the name of the connected platform
-     * @param status       true if successful
-     */
-    @Override
-    public void onConnect(String platformName, Boolean status) {
-        logger.info("Connected to platform: {}", platformName);
+        logger.info("Registering TCP subscriber: " + subscriberName);
+        SubscriberInterface sub = LoadSubscriberClass.loadSubscriber(
+            classPath,
+            new Class<?>[]{String.class, String.class, int.class},
+            new Object[]{subscriberName, serverAddress, serverPort}
+        );
+
+        subscriberMap.put(subscriberName, sub);
+        sub.setCoordinator(this);
     }
 
     /**
-     * Callback indicating a disconnection from a platform.
+     * Loads and registers the REST subscriber by dynamically loading the subscriber class.
      *
-     * @param platformName the name of the disconnected platform
-     * @param status       true if disconnected
+     * @throws IOException If there is an issue loading the REST subscriber configuration
      */
-    @Override
-    public void onDisConnect(String platformName, Boolean status) {
-        logger.warn("Disconnected from platform: {}", platformName);
+    private void RestLoader() throws IOException {
+        String subscriberName = AppConfig.getRESTSubscriberName();
+        String baseURL = AppConfig.getRESTBaseUrl();
+        String classPath = AppConfig.getRESTClassPath();
+
+        logger.info("Registering REST subscriber: " + subscriberName);
+        SubscriberInterface sub = LoadSubscriberClass.loadSubscriber(
+            classPath,
+            new Class<?>[]{String.class, String.class},
+            new Object[]{subscriberName, baseURL}
+        );
+
+        subscriberMap.put(subscriberName, sub);
+        sub.setCoordinator(this);
     }
 
     /**
-     * Callback triggered when new rate data becomes available for the first time.
-     * Sends the data to Kafka and caches it.
+     * Connects to all subscriber platforms using the provided username and password.
      *
-     * @param platformName the platform name
-     * @param rateName     the name of the rate
-     * @param dto          the rate data
+     * @param username The username for connecting to the platforms
+     * @param password The password for connecting to the platforms
      */
-    @Override
-    public void onRateAvailable(String platformName, String rateName, RateDto dto) {
+    private void Connector(String username, String password) {
         try {
-            kafkaProducer.send(platformName, rateName, dto);
-            cacheService.cacheRate(platformName + "_" + rateName, dto);
-            logger.debug("Rate data sent to Kafka - Platform: {}, Rate: {}, Data: {}", platformName, rateName, dto);
-        } catch (Exception e) {
-            logger.error("Error while sending rate to Kafka - Platform: {}, Rate: {}", platformName, rateName, e);
+            for (String subscriberName : subscriberNames) {
+                SubscriberInterface sub = this.subscriberMap.get(subscriberName);
+                if (sub == null) {
+                    logger.warn("Subscriber {} not found!", subscriberName);
+                    throw new IllegalStateException("Failed to get subscriber" + subscriberName);
+                }
+                sub.connect(subscriberName, username, password);
+                if (!sub.getConnectionStatus()) {
+                    logger.warn(subscriberName + " couldn't connect");
+                    subscriberMap.remove(subscriberName);
+                }
+            }
+        } catch (IOException e) {
+            logger.warn(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Callback triggered when rate data is updated.
-     * Converts it to a DTO, sends to Kafka, and updates the cache.
-     *
-     * @param platformName the platform name
-     * @param rateName     the name of the rate
-     * @param rateFields   the updated rate fields
+     * Shuts down the coordinator, disconnects all subscribers, and closes resources.
      */
     @Override
-    public void onRateUpdate(String platformName, String rateName, RateFields rateFields) throws JsonProcessingException {
-        RateDto dto = new RateDto();
-        dto.setRateName(rateName);
-        dto.setBid(rateFields.getBid());
-        dto.setAsk(rateFields.getAsk());
-        dto.setRateUpdateTime(rateFields.getTimestamp());
+    public void close() {
+        logger.info("Program is closing");
+        for (String subscriberName : subscriberMap.keySet()) {
+            SubscriberInterface sub = this.subscriberMap.get(subscriberName);
+            sub.disConnect(subscriberName, username, password);
+            subscriberMap.remove(subscriberName);
+        }
 
-        kafkaProducer.send(platformName, rateName, dto);
-        cacheService.cacheRate(platformName + "_" + rateName, dto);
-        logger.debug("Rate updated - Platform: {}, Rate: {}, Fields: {}", platformName, rateName, rateFields);
+        rateCache.closeCache();
+        logger.info("Program is shut down");
     }
 
     /**
-     * Callback triggered when the rate status changes (e.g., AVAILABLE or UNAVAILABLE).
-     *
-     * @param platformName the platform name
-     * @param rateName     the rate name
-     * @param rateStatus   the new status
+     * The main execution loop for the Coordinator, continuously processing rate data and updating Kafka and database.
      */
     @Override
-    public void onRateStatus(String platformName, String rateName, RateStatus rateStatus) {
-        logger.debug("Rate status updated - Platform: {}, Rate: {}, Status: {}", platformName, rateName, rateStatus);
+    public void run() {
+        logger.info("Coordinator is running");
+        while (!subscriberMap.isEmpty()) {
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            for (String calculatedRate : calculatedRateNames) {
+                RateDto dto = calculator.calculateRate(calculatedRate);
+                if (dto == null) {
+                    continue;
+                }
+                rateCache.updateCalculatedRate(dto);
+                kafka.produceRate(dto);
+                database.updateRates(kafka.consumeRate());
+            }
+        }
     }
 
     /**
-     * Starts subscription for the given platform and all defined rates.
+     * Callback method when a connection to a platform is established.
      *
-     * @param platformName the platform to subscribe to
-     * @throws IOException if subscription fails
+     * @param platformName The name of the platform
+     * @param status The connection status (true if connected, false if disconnected)
      */
-    private void subscriber(String platformName) throws IOException {
-        logger.info("Starting subscription for platform: {}", platformName);
-        for (DataProvider dataProvider : dataProviders) {
-            for (String rateName : rateNames) {
+    @Override
+    public void onConnect(String platformName, Boolean status) {
+        logger.info("Connected to platform {}, status: {}", platformName, status);
+        if (status) {
+            for (String rateName : subscribedRateNames) {
                 try {
-                    dataProvider.subscribe(platformName, rateName);
-                    logger.info("Subscribed -> Platform: {}, Rate: {}", platformName, rateName);
-                } catch (Exception e) {
-                    logger.error("Subscription error - Platform: {}, Rate: {}", platformName, rateName, e);
+                    this.subscriberMap.get(platformName).subscribe(platformName, rateName);
+                } catch (IOException error) {
+                    logger.warn(error.getMessage());
+                    throw new RuntimeException(error);
                 }
             }
         }
     }
 
     /**
-     * Runs the coordinator thread. It starts the subscriptions and listens to Kafka.
+     * Callback method when a connection to a platform is lost.
+     *
+     * @param platformName The name of the platform
+     * @param status The connection status (true if connected, false if disconnected)
      */
     @Override
-    public void run() {
-        logger.info("Coordinator thread running.");
-        try {
-            subscriber("PF1");
-            subscriber("PF2");
-            kafkaConsumer.listen("rates");
-        } catch (IOException e) {
-            logger.error("Error occurred while running Coordinator thread", e);
+    public void onDisConnect(String platformName, Boolean status) {
+        logger.info("Disconnected from platform {}, status: {}", platformName, status);
+        if (!status) {
+            for (String rateName : subscribedRateNames) {
+                try {
+                    this.subscriberMap.get(platformName).unSubscribe(platformName, rateName);
+                } catch (Exception error) {
+                    logger.warn(error.getMessage());
+                    throw new RuntimeException(error);
+                }
+            }
         }
+    }
+
+    /**
+     * Callback method when a rate is available from a platform.
+     *
+     * @param platformName The name of the platform
+     * @param rateName The name of the rate
+     * @param dto The rate data
+     */
+    @Override
+    public void onRateAvailable(String platformName, String rateName, RateDto dto) {
+        logger.info("Rate available for platform {} -- rateName {}", platformName, rateName);
+        dto.setStatus(RateStatus.AVAILABLE);
+        this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
+        rateCache.updateRawRate(dto);
+        kafka.produceRate(dto);
+        database.updateRates(kafka.consumeRate());
+    }
+
+    /**
+     * Callback method when a rate is updated from a platform.
+     *
+     * @param platformName The name of the platform
+     * @param rateName The name of the rate
+     * @param dto The rate data
+     */
+    @Override
+    public void onRateUpdate(String platformName, String rateName, RateDto dto) {
+        logger.info("Rate updated for platform {} -- rateName {}", platformName, rateName);
+        dto.setStatus(RateStatus.UPDATED);
+        this.rateStatusMap.put(rateName, RateStatus.UPDATED);
+        rateCache.updateRawRate(dto);
+        kafka.produceRate(dto);
+        database.updateRates(kafka.consumeRate());
+    }
+
+    /**
+     * Returns the current status of a rate for a given platform.
+     *
+     * @param platformName The name of the platform
+     * @param rateName The name of the rate
+     * @return The current status of the rate
+     */
+    @Override
+    public RateStatus onRateStatus(String platformName, String rateName) {
+        return rateStatusMap.get(rateName);
     }
 }

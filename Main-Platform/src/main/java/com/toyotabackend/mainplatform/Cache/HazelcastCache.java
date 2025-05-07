@@ -15,20 +15,18 @@ import java.util.List;
 /**
  * Service class responsible for caching rate data using Hazelcast.
  * <p>
- * Provides basic CRUD operations for rate data within a distributed map.
+ * Manages two separate caches: raw rates and calculated rates.
  */
 public class HazelcastCache {
 
-
     private final HazelcastInstance hazelcastInstance;
     private final Logger cacheLogger = LogManager.getLogger("CacheLogger");
-    private final IMap<String,RateDto> rawCache;
-    private final IMap<String,RateDto> calculatedCache;
+    private final IMap<String, RateDto> rawCache;
+    private final IMap<String, RateDto> calculatedCache;
 
     /**
-     * Constructs the HazelcastCacheService with the given Hazelcast instance.
-     *
-     * @param hazelcastInstance the Hazelcast instance to be used for caching
+     * Initializes the Hazelcast instance and retrieves distributed maps
+     * for raw and calculated rate data.
      */
     public HazelcastCache() {
         cacheLogger.info("Rate cache initialized");
@@ -38,69 +36,94 @@ public class HazelcastCache {
         cacheLogger.info("Rate cache has been created");
     }
 
-    public List<RateDto> getRawRates(String rateSymbol){
-        cacheLogger.info("Rates with \'{}\' symbol has been requested from raw rate cache", rateSymbol);
+    /**
+     * Retrieves a list of raw rate entries matching the given symbol.
+     *
+     * @param rateSymbol the symbol to search for
+     * @return list of matching RateDto objects or null if not found
+     */
+    public List<RateDto> getRawRates(String rateSymbol) {
+        cacheLogger.info("Rates with '{}' symbol requested from raw rate cache", rateSymbol);
         List<RateDto> rawRatesSymbol = new ArrayList<>();
         Collection<RateDto> rawRateList = rawCache.values();
-        for(RateDto rawRate : rawRateList){
-            if(rawRate.getRateName().contains(rateSymbol)){
+        for (RateDto rawRate : rawRateList) {
+            if (rawRate.getRateName().contains(rateSymbol)) {
                 rawRatesSymbol.add(rawRate);
             }
         }
-        if(rawRatesSymbol.isEmpty()){
-            cacheLogger.warn("There is no raw rates with the symbol \'{}\' in raw rate cache!", rateSymbol);
+        if (rawRatesSymbol.isEmpty()) {
+            cacheLogger.warn("No raw rates found with symbol '{}'", rateSymbol);
             return null;
         }
-        cacheLogger.info("Rate with \'{}\' symbol fetched from raw rate cache!", rateSymbol);
-
+        cacheLogger.info("Rates with '{}' symbol fetched successfully", rateSymbol);
         return rawRatesSymbol;
     }
 
-    public RateDto getRawRateDto(String rateName){
-        cacheLogger.info("{} rate requested!",rateName);
+    /**
+     * Retrieves a raw rate by its name.
+     *
+     * @param rateName the name of the rate
+     * @return the corresponding RateDto or null if not found
+     */
+    public RateDto getRawRateDto(String rateName) {
+        cacheLogger.info("{} rate requested", rateName);
         RateDto dto = rawCache.get(rateName);
-        if(dto == null){
-            cacheLogger.warn("There is no rate with {} this name",rateName);
+        if (dto == null) {
+            cacheLogger.warn("No raw rate found with name {}", rateName);
             return null;
         }
-
-        cacheLogger.info("{} rate has been retreived from raw rate cache!",rateName);
+        cacheLogger.info("{} raw rate retrieved successfully", rateName);
         return dto;
     }
 
-    public RateDto getCalculatedRateDto(String rateName){
-        cacheLogger.info("{} rate requested!",rateName);
+    /**
+     * Retrieves a calculated rate by its name.
+     *
+     * @param rateName the name of the rate
+     * @return the corresponding RateDto or null if not found
+     */
+    public RateDto getCalculatedRateDto(String rateName) {
+        cacheLogger.info("{} rate requested", rateName);
         RateDto dto = calculatedCache.get(rateName);
-        if(dto == null){
-            cacheLogger.warn("There is no rate with {} this name",rateName);
+        if (dto == null) {
+            cacheLogger.warn("No calculated rate found with name {}", rateName);
             return null;
         }
-
-        cacheLogger.info("{} rate has been retreived from calculated rate cache!",rateName);
+        cacheLogger.info("{} calculated rate retrieved successfully", rateName);
         return dto;
     }
 
-    public void updateRawRate(RateDto dto){
+    /**
+     * Updates or inserts a raw rate in the cache.
+     *
+     * @param dto the RateDto to update
+     */
+    public void updateRawRate(RateDto dto) {
         String rawRateName = dto.getRateName();
-        cacheLogger.info("Raw rate {} is getting uptaded!",rawRateName);
-        rawCache.put(rawRateName,dto);
-        cacheLogger.info("Raw rate {} is uptaded!",rawRateName);
+        cacheLogger.info("Updating raw rate: {}", rawRateName);
+        rawCache.put(rawRateName, dto);
+        cacheLogger.info("Raw rate {} updated", rawRateName);
     }
 
-    public void updateCalculatedRate(RateDto dto){
-        if(dto == null){
-            return;
-        }
-
+    /**
+     * Updates or inserts a calculated rate in the cache.
+     *
+     * @param dto the RateDto to update
+     */
+    public void updateCalculatedRate(RateDto dto) {
+        if (dto == null) return;
         String calculatedRateName = dto.getRateName();
-        cacheLogger.info("Calculated rate {} is getting uptaded!",calculatedRateName);
-        calculatedCache.put(calculatedRateName,dto);
-        cacheLogger.info("Calculated rate {} is uptaded!",calculatedRateName);
+        cacheLogger.info("Updating calculated rate: {}", calculatedRateName);
+        calculatedCache.put(calculatedRateName, dto);
+        cacheLogger.info("Calculated rate {} updated", calculatedRateName);
     }
 
-    public void closeCache(){
-        cacheLogger.info("Cache is being closed!");
+    /**
+     * Shuts down the Hazelcast instance and clears cache resources.
+     */
+    public void closeCache() {
+        cacheLogger.info("Closing cache...");
         this.hazelcastInstance.shutdown();
-        cacheLogger.info("Cache is closed!");
+        cacheLogger.info("Cache closed successfully");
     }
 }

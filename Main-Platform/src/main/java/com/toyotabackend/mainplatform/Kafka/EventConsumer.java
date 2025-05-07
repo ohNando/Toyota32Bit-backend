@@ -15,10 +15,24 @@ import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 import java.time.Duration;
 import java.util.*;
 
+/**
+ * The EventConsumer class is responsible for consuming messages from a Kafka topic.
+ * It listens to the "rates" topic and maps the consumed messages into RateDto objects.
+ * <p>
+ * This class uses Kafka's consumer API to subscribe to a topic and fetch messages from Kafka.
+ * The consumed messages are deserialized into RateDto objects, which are then processed or forwarded
+ * for further processing in the application.
+ * </p>
+ */
 public class EventConsumer {
     private final Consumer<String,String> consumer;
     private final String topic;
     
+    /**
+     * Constructs a new EventConsumer instance with default Kafka properties.
+     * The consumer is configured to connect to a local Kafka broker at "localhost:9092"
+     * and will start reading messages from the earliest offset.
+     */
     public EventConsumer(){
         final Properties properties = new Properties(){
             {
@@ -30,15 +44,22 @@ public class EventConsumer {
             }
         };
         consumer = new KafkaConsumer<>(properties);
-        this.topic = "rates";
+        this.topic = "rates"; // The topic to consume from
     }
 
+    /**
+     * Consumes messages from the "rates" Kafka topic and returns a list of RateDto objects.
+     * The messages are deserialized from JSON strings into RateDto instances using the RateMapper.
+     *
+     * @return A list of RateDto objects representing the consumed rate data
+     */
     public List<RateDto> consumeRate(){
         List<RateDto> dtoList = new ArrayList<>();
         synchronized(consumer) {
             consumer.subscribe(Arrays.asList(topic));
-            ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(1000));
+            ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(1000)); // Poll for records
             for(ConsumerRecord<String,String> record : records){
+                // Map the consumed message to a RateDto
                 dtoList.add(RateMapper.stringToDTO(record.value()));
             }
         }

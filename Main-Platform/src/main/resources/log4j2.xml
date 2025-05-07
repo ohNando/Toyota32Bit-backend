@@ -4,5 +4,9 @@
         <Console>
             <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
         </Console>
+
+        <File name="CacheFile" filename="toyota-main-rate-api/logs/cache.log" append="true">
+            <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
+        </File>
     </Appanders>
 </Configuration>

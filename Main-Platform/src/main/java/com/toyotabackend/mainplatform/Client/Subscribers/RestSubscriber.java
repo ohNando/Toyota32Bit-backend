@@ -3,15 +3,14 @@ package com.toyotabackend.mainplatform.Client.Subscribers;
 import com.toyotabackend.mainplatform.AuthEntity.LoginEntity;
 import com.toyotabackend.mainplatform.AuthEntity.UserAuth;
 import com.toyotabackend.mainplatform.Client.SubscriberInterface;
+import com.toyotabackend.mainplatform.Config.AppConfig;
 import com.toyotabackend.mainplatform.Coordinator.CoordinatorInterface;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,25 +28,31 @@ import java.util.List;
 public class RestSubscriber extends Thread implements SubscriberInterface {
 
     private CoordinatorInterface coordinator;
-    private boolean connectionStatus;
     private final List<String> subscribedRates;
     private final RestTemplate restTemplate;
 
+    private String subscriberName;
+    private String baseUrl;
+    private String loginUrl;
+    private boolean connectionStatus;
+
     private final Logger logger = LoggerFactory.getLogger("SubscriberLogger");
 
-    @Value("${client.Rest_Api.baseUrl}")
-    private String baseUrl;
-
-    @Value("${client.Rest_Api.loginUrl}")
-    private String loginUrl;
 
     /**
      * Constructs a new RestSubscriber with a reference to the Coordinator
      * to receive rate updates and status notifications.
      *
-     * @param coordinator the coordinator that handles callbacks
+     * @param subscriberName name of the subscriber
+     * @param baseUrl url of the Rest endpoint
      */
-    public RestSubscriber(){
+    public RestSubscriber(String _subscriberName,String baseUrl) throws IOException{
+        logger.info("initialializing Subscriber "+ subscriberName);
+        
+        this.subscriberName = _subscriberName;
+        this.baseUrl = baseUrl;
+        this.loginUrl = AppConfig.getRESTLoginUrl();
+
         this.restTemplate = new RestTemplate();
         this.connectionStatus = false;
         this.subscribedRates = new ArrayList<>();
@@ -58,7 +63,10 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     public void setCoordinator(CoordinatorInterface coordinator){
         this.coordinator = coordinator;
     }
-
+    @Override
+    public boolean getConnectionStatus(){
+        return this.connectionStatus; 
+    }
     /**
      * Attempts to authenticate the subscriber with the REST API using the provided
      * platform name, username, and password.
@@ -109,7 +117,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     }
 
     /**
-     * Disconnects from the platform. Currently, this method just logs the disconnection.
+     * Disconnects from the platform. Currently, this method logs for the disconnection
+     * and call the onDisconnect method.
      *
      * @param platformName the platform identifier
      * @param username     the username
@@ -217,8 +226,6 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                         coordinator.onRateAvailable("PF2", dto.getRateName(), dto);
                         break;
                     case RateStatus.AVAILABLE:
-                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
-                        break;
                     case RateStatus.UPDATED:
                         coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
                         break;

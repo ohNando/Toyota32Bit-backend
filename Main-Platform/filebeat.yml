@@ -1,0 +1,29 @@
+filebeat.inputs:
+  - type: log
+    paths:
+      - /home/ohnando/Projects/Toyota-Backend-Project/Main-Platform/logs/filebeat.log
+
+output.elasticsearch:
+  hosts: ["https://opensearch:9200"]
+  username: "admin"
+  password: "Aloha.32bit"
+  index: "filebeat-%{+yyyy.MM.dd}"
+  ssl:
+    verification_mode: none
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+setup.template.enabled: true
+setup.ilm.enabled: true
+
+setup.kibana:
+  host: "https://opensearch-dashboards:5601"
+  username: "admin"
+  password: "Aloha.32bit"
+  ssl:
+    verification_mode: none
+
+xpack.monitoring.enabled: false
+xpack.management.enabled: false
+
+logging.level: info

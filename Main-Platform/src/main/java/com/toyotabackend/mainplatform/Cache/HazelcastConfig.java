@@ -8,19 +8,20 @@ import com.hazelcast.config.Config;
 /**
  * Configuration class for setting up Hazelcast in the application.
  * <p>
- * Defines and customizes the Hazelcast instance and map configurations.
+ * Defines and customizes the Hazelcast instance and map configurations for rate caching.
  */
 @Configuration
 public class HazelcastConfig {
 
     /**
-     * Defines the Hazelcast configuration bean.
+     * Creates and configures a Hazelcast instance with specific map settings
+     * for raw and calculated rate caches.
      *
      * @return a configured Hazelcast {@link Config} instance
      */
     @Bean(name = "custom")
     public Config hazelcastConfig() {
-        Config config =  new Config();
+        Config config = new Config();
         config.setInstanceName("main-hazelcast-instance");
 
         MapConfig rawRateConfig = new MapConfig();
