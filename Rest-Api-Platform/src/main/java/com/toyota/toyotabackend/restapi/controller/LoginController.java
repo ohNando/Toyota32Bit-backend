@@ -4,12 +4,8 @@ import com.toyota.toyotabackend.restapi.dto.ResponseDto;
 import com.toyota.toyotabackend.restapi.dto.UserDto;
 import com.toyota.toyotabackend.restapi.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A REST controller that handles user authentication requests.

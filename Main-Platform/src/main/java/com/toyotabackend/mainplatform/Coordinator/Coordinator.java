@@ -13,7 +13,6 @@ import com.toyotabackend.mainplatform.Cache.HazelcastCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
@@ -72,6 +71,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
                 rateStatusMap.put(subscriberName + "_" + rawRate, RateStatus.NOT_AVAILABLE);
             }
         }
+
         this.subscriberMap = new HashMap<>();
         this.kafka = new Kafka();
         this.database = applicationContext.getBean("postgreSQL", DatabaseService.class);
@@ -125,7 +125,8 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         String classPath = AppConfig.getRESTClassPath();
 
         logger.info("Registering REST subscriber: " + subscriberName);
-        SubscriberInterface sub = LoadSubscriberClass.loadSubscriber(
+        try{
+            SubscriberInterface sub = LoadSubscriberClass.loadSubscriber(
             classPath,
             new Class<?>[]{String.class, String.class},
             new Object[]{subscriberName, baseURL}
@@ -133,6 +134,12 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
 
         subscriberMap.put(subscriberName, sub);
         sub.setCoordinator(this);
+        logger.info("REST subscriber {} successfully loaded", subscriberName);
+        }catch(Exception e){
+            logger.error("Error loading REST subscriber: " + e.getMessage(), e);
+            throw new IOException("Error loading REST subscriber", e);
+        }
+        
     }
 
     /**
@@ -153,6 +160,8 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
                 if (!sub.getConnectionStatus()) {
                     logger.warn(subscriberName + " couldn't connect");
                     subscriberMap.remove(subscriberName);
+                }else{
+                    logger.info("{} connected successfully", subscriberName);
                 }
             }
         } catch (IOException e) {
@@ -191,10 +200,12 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
             }
 
             for (String calculatedRate : calculatedRateNames) {
+                logger.info("Coordinator is calculating : {}",calculatedRate);
                 RateDto dto = calculator.calculateRate(calculatedRate);
                 if (dto == null) {
                     continue;
                 }
+                logger.info("dto : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 rateCache.updateCalculatedRate(dto);
                 kafka.produceRate(dto);
                 database.updateRates(kafka.consumeRate());
@@ -254,6 +265,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     @Override
     public void onRateAvailable(String platformName, String rateName, RateDto dto) {
         logger.info("Rate available for platform {} -- rateName {}", platformName, rateName);
+        logger.info("dto : {} {}",dto.getAsk(),dto.getBid());
         dto.setStatus(RateStatus.AVAILABLE);
         this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
         rateCache.updateRawRate(dto);
@@ -271,6 +283,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     @Override
     public void onRateUpdate(String platformName, String rateName, RateDto dto) {
         logger.info("Rate updated for platform {} -- rateName {}", platformName, rateName);
+        logger.info("dto : {} {}",dto.getAsk(),dto.getBid());
         dto.setStatus(RateStatus.UPDATED);
         this.rateStatusMap.put(rateName, RateStatus.UPDATED);
         rateCache.updateRawRate(dto);

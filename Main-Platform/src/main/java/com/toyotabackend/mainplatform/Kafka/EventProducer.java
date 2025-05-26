@@ -6,8 +6,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Mapper.RateMapper;
@@ -28,7 +28,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
  * </p>
  */
 public class EventProducer {
-    private final Logger logger = LogManager.getLogger("KafkaLogger");
+    private final Logger logger = LoggerFactory.getLogger("KafkaLogger");
     private String topic;  // The Kafka topic name to send messages to
     private final Producer<String, String> producer;
 

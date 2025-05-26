@@ -1,12 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-    <Appanders>
-        <Console>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
         </Console>
 
-        <File name="CacheFile" filename="toyota-main-rate-api/logs/cache.log" append="true">
+        <File name="CacheFile" filename="logs/cache.log" append="true">
             <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
         </File>
-    </Appanders>
+
+        <File name="CoordinatorFile" filename="logs/coordinator.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+
+        <File name="CalculatorFile" filename="logs/calculator.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+
+        <File name="SubscriberFile" filename="logs/subscriber.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+        <File name="DatabaseFile" filename="logs/database.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+        <File name="KafkaFile" filename="logs/kafka.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="CacheLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="CacheFile"/>
+        </Logger>
+
+        <Logger name="CoordinatorLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="CoordinatorFile"/>
+        </Logger>
+
+        <Logger name="CalculatorLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="CalculatorFile"/>
+        </Logger>
+
+        <Logger name="SubscriberLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SubscriberFile"/>
+        </Logger>
+
+        <Logger name="DatabaseLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="DatabaseFile"/>
+        </Logger>
+
+        <Logger name="KafkaLogger" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="KafkaFile"/>
+        </Logger>
+
+        <Root level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
 </Configuration>

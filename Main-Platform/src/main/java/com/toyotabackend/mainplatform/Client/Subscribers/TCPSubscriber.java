@@ -6,8 +6,11 @@ import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 import com.toyotabackend.mainplatform.Mapper.RateMapper;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +32,8 @@ import java.util.List;
  * This class is designed specifically for use with platform "PF1".
  * </p>
  */
+@Getter
+@Setter
 public class TCPSubscriber extends Thread implements SubscriberInterface { //Subscriber 2
     private String serverAddress;
     private int serverPort;
@@ -40,7 +45,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     private BufferedReader input;
     private boolean connectionStatus;
 
-    private final Logger logger = LogManager.getLogger("SubscriberLogger");
+    private final Logger logger = LoggerFactory.getLogger("SubscriberLogger-TCP");
 
     /**
      * Constructs a TCPSubscriber with server address and port details.
@@ -62,6 +67,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      *
      * @param coordinator the coordinator instance
      */
+    @Override
     public void setCoordinator(CoordinatorInterface coordinator){
         this.coordinator = coordinator;
     }
@@ -102,11 +108,11 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
             }
 
             logger.error("Failed to connect {}",serverAddress);
-            this.connectionStatus = false;
+            this.setConnectionStatus(false);
             return;
         }
         
-        this.connectionStatus = true;
+        this.setConnectionStatus(true);
         this.output = new PrintWriter(socket.getOutputStream(), true);
         this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         logger.info("Trying to login to {} : {}",serverAddress,serverPort);
@@ -138,7 +144,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
         try{
             this.input.close();
             this.output.close();
-            this.connectionStatus = false;
+            this.setConnectionStatus(false);
             coordinator.onDisConnect(platformName,connectionStatus);
             this.socket.close();    
             logger.info("{} disconnected from {} : {}",platformName,serverAddress,serverPort);
@@ -190,22 +196,32 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     @Override
     public void run() {
+        logger.info("Subscriber is starting.");
         String response;
-        while(connectionStatus){
+        logger.info("CONNECTION STATUS = ",this.connectionStatus);
+        while(this.connectionStatus){
             try{
                 response = input.readLine();
-                if(response == null){
+                logger.info(response);
+                if(response ==  null){
+                    logger.warn("NO RATE AVAILABLE");
                     continue;
                 }
                 RateDto dto = RateMapper.stringToDTO(response);
+                logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 for(String subscribedRate : subscribedRates){
                     if(dto.getRateName().equals("PF1" + "_" + subscribedRate)){
                         switch (coordinator.onRateStatus("PF1", dto.getRateName())) {
                             case RateStatus.NOT_AVAILABLE:
+                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                                 coordinator.onRateAvailable("PF1",dto.getRateName(),dto);
                                 break;
                             case RateStatus.AVAILABLE:
+                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                coordinator.onRateUpdate("PF1", dto.getRateName(), dto);
+                                break;
                             case RateStatus.UPDATED:
+                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                                 coordinator.onRateUpdate("PF1",dto.getRateName(),dto);
                                 break;
                         }
@@ -215,5 +231,6 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
                 logger.error("PF1" + "Subscriber Error: {}", error.getMessage());
             }
         }
+        logger.info("DISCONNECTING");
     }
 }

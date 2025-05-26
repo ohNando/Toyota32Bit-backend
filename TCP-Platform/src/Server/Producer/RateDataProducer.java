@@ -32,12 +32,12 @@ public class RateDataProducer {
      */
     public synchronized void subscribe(String currencyRate, PrintWriter output) {
         if (rateProducerThreads.containsKey(currencyRate)) {
-            output.println("(?)|Already subscribed to " + currencyRate);
+            System.out.println("(?)|Already subscribed to " + currencyRate);
         } else {
             RateProducerThread rateProducerThread = new RateProducerThread(currencyRate, properties, output);
             rateProducerThreads.put(currencyRate, rateProducerThread);
             new Thread(rateProducerThread).start();
-            output.println("(+)|Subscribed to " + currencyRate);
+            System.out.println("(+)|Subscribed to " + currencyRate);
         }
     }
 
@@ -55,12 +55,12 @@ public class RateDataProducer {
             try {
                 rateProducerThread.join();
                 rateProducerThreads.remove(currencyRate);
-                output.println("(+)|Unsubscribed from " + currencyRate);
+                System.out.println("(+)|Unsubscribed from " + currencyRate);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         } else {
-            output.println("(?)|Invalid unsubscribe request: " + currencyRate);
+            System.out.println("(?)|Invalid unsubscribe request: " + currencyRate);
         }
     }
 }

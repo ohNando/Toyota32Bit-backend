@@ -59,7 +59,8 @@ public class RateMapper {
         if (parts.length < 3) return null;
 
         RateDto dto = new RateDto();
-        dto.setRateName(parts[0]);
+        String[] nameParts = parts[0].split("_");
+        dto.setRateName(nameParts.length > 1 ? nameParts[1] : parts[0]);
 
         String[] bidParts = parts[1].split(":");
         if (bidParts.length == 3 && bidParts[1].equals("number")) {

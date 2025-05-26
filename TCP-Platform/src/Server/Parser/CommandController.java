@@ -106,20 +106,18 @@ public class CommandController {
      * Validates the command by checking the command name, platform name, and currency rate.
      *
      * @param receivedMessage The message containing the command to check.
-     * @return "OK" if all parts are valid, or an error message indicating the issue.
+     * @return true if all parts are valid, or false.
      */
-    public String checkCommand(String receivedMessage){
+    public Boolean checkCommand(String receivedMessage){
         String commandName = getCommandName(receivedMessage);
         String platformName = getPlatformName(receivedMessage);
         String currencyRate = getCurrencyRate(receivedMessage);
 
-        if(commandName.isEmpty()) return "(-)|Missing command";
-        if(platformName.isEmpty()) return "(-)|Missing platform name";
-        if(currencyRate.isEmpty()) return "(-)|Missing currency rate";
+        if(commandName.isEmpty() || platformName.isEmpty() || currencyRate.isEmpty())
+            return false;
 
-        if(!isValidCommand(commandName)) return "(-)|Invalid command";
-        if(!isValidPlatformName(platformName)) return "(-)|Invalid platform name";
-        if(!isValidRate(currencyRate)) return "(-)|Invalid currency pair";
-        return "OK";
+        if(!isValidCommand(commandName) || !isValidPlatformName(platformName) || !isValidRate(currencyRate))
+            return false;
+        return true;
     }
 }

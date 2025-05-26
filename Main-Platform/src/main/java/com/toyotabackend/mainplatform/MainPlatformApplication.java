@@ -12,16 +12,13 @@ import com.toyotabackend.mainplatform.Coordinator.Coordinator;
  * The entry point of the Spring Boot application for the main platform.
  * <p>
  * This class is responsible for starting the Spring Boot application context.
- * The {@link SpringApplication} class is used to bootstrap the application.
  */
 @SpringBootApplication
 public class MainPlatformApplication {
-
     /**
      * The main method which serves as the entry point for the Spring Boot application.
      * <p>
-     * This method triggers the Spring Boot application to start by invoking the
-     * {@link SpringApplication#run(Class, String...)} method.
+     * This method triggers the Spring Boot application.
      *
      * @param args the command-line arguments passed to the application, which are
      *             forwarded to the Spring Boot context.
@@ -29,6 +26,7 @@ public class MainPlatformApplication {
      */
     public static void main(String[] args) throws IOException {
         // Run the Spring Boot application and initialize the Coordinator
-        Coordinator coordinator = new Coordinator((ApplicationContext) SpringApplication.run(MainPlatformApplication.class, args));
+        Coordinator coordinator = new Coordinator((ApplicationContext)
+                SpringApplication.run(MainPlatformApplication.class, args));
     }
 }

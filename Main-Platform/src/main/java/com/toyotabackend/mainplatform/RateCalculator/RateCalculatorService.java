@@ -6,8 +6,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.RateService.RateService;
@@ -24,7 +24,7 @@ public class RateCalculatorService {
     private RateService service;
     private String[] rawRateNames;
     private String[] derivedRateNames;
-    private final Logger logger = LogManager.getLogger("Calculator");
+    private final Logger logger = LoggerFactory.getLogger("CalculatorLogger");
 
     private final String rawRateCalculatorScriptPath = System.getProperty("user.dir") + "/Main-Platform/Scripts/RawRateCalculator.groovy";
     private final String derivedRateCalculaterScriptPath = System.getProperty("user.dir") + "/Main-Platform/Scripts/DerivedRateCalculator.groovy";

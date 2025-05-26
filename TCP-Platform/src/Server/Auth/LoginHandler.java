@@ -28,13 +28,11 @@ public class LoginHandler {
         String loginAttempt = input.readLine();
 
         if (loginAttempt == null || !loginAttempt.startsWith("login|")) {
-            output.println("(!)|Invalid login format.");
             return false;
         }
 
         String[] parts = loginAttempt.split("\\|");
         if (parts.length != 3) {
-            output.println("(!)|Invalid login format.");
             return false;
         }
 
@@ -43,11 +41,8 @@ public class LoginHandler {
 
         if (!username.equals(properties.getProperty("login.user.username"))
                 || !password.equals(properties.getProperty("login.user.password"))) {
-            output.println("(-)|Invalid username or password.");
             return false;
         }
-
-        output.println("(+)|Login successful.");
         return true;
     }
 }

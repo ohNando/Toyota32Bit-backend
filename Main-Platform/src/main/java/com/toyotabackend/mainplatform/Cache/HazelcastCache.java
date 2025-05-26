@@ -5,8 +5,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.List;
 public class HazelcastCache {
 
     private final HazelcastInstance hazelcastInstance;
-    private final Logger cacheLogger = LogManager.getLogger("CacheLogger");
+    private final Logger cacheLogger = LoggerFactory.getLogger("CacheLogger");
     private final IMap<String, RateDto> rawCache;
     private final IMap<String, RateDto> calculatedCache;
 

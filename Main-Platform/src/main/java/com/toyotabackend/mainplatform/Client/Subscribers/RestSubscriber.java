@@ -8,6 +8,9 @@ import com.toyotabackend.mainplatform.Coordinator.CoordinatorInterface;
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -25,8 +28,9 @@ import java.util.List;
  *
  * This class is specifically designed to work with platform "PF2".
  */
+@Getter
+@Setter
 public class RestSubscriber extends Thread implements SubscriberInterface {
-
     private CoordinatorInterface coordinator;
     private final List<String> subscribedRates;
     private final RestTemplate restTemplate;
@@ -36,8 +40,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     private String loginUrl;
     private boolean connectionStatus;
 
-    private final Logger logger = LoggerFactory.getLogger("SubscriberLogger");
-
+    private final Logger logger = LoggerFactory.getLogger("SubscriberLogger-REST");
 
     /**
      * Constructs a new RestSubscriber with a reference to the Coordinator
@@ -54,9 +57,9 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
         this.loginUrl = AppConfig.getRESTLoginUrl();
 
         this.restTemplate = new RestTemplate();
-        this.connectionStatus = false;
+        this.setConnectionStatus(false);
         this.subscribedRates = new ArrayList<>();
-        logger.info("Subscriber initialialized");
+        logger.info("Subscriber initialialized" + subscriberName);
     }
 
     @Override
@@ -83,34 +86,37 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
             this.connectionStatus = false;
             return;
         }
-        logger.info("Connecting to {}",baseUrl);
+        logger.info("Connecting to {}",this.loginUrl);
         LoginEntity login = new LoginEntity(username,password);
 
         try {
             ResponseEntity<UserAuth> response = restTemplate.postForEntity(this.loginUrl, login, UserAuth.class);
 
             if(response.getStatusCode() != HttpStatus.OK){
-                logger.warn("Failed to connect to : {} with status code: {}", baseUrl, response.getStatusCode());
-                this.connectionStatus = false;
+                logger.warn("Failed to connect to : {} with status code: {}", this.loginUrl, response.getStatusCode());
+                this.setConnectionStatus(false);
                 return;
             }
+            logger.info("Connected to {} , status code:",this.loginUrl,response.getStatusCode());
+            
             
             UserAuth loginResponse = response.getBody();
 
-            if (loginResponse.getStatus().equals("OK")) {
+            if (loginResponse.getStatus().equals("success")) {
                 logger.info("Successfully connected to {} with username {}", baseUrl, username);
             } else {
                 logger.warn("Failed to connect to {} with username {}", baseUrl, username);
-                this.connectionStatus = false;
+                this.setConnectionStatus(false);
                 return;
             }
 
-            this.connectionStatus = true;
+            this.setConnectionStatus(true); 
             coordinator.onConnect(platformName, connectionStatus);
             logger.info("Connected to {}",baseUrl);
             this.start();
 
         } catch (Exception e) {
+            this.setConnectionStatus(false);
             logger.warn("Failed to connect to {} with username {}", baseUrl, username);
             return;
         }
@@ -133,7 +139,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
             return;
         }
         logger.info("Disconnecting from {}", baseUrl);
-        this.connectionStatus = false;
+        this.setConnectionStatus(false);
         coordinator.onDisConnect(platformName,connectionStatus);
         logger.info("Disconnected from {}", baseUrl);
     }
@@ -187,12 +193,14 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
             for(String rateName : subscribedRates){
                 String requestURL = baseUrl + "/" + rateName;
                 ResponseEntity<RateDto> response = null;
-
+                
                 int countOfTry = 0;
                 boolean successful = false; 
-                while(countOfTry < 5 & !successful){
+                logger.info("Subscriber is starting.");
+                while(countOfTry < 3 && !successful){
                     try{
                         response = restTemplate.getForEntity(requestURL, RateDto.class);
+                        logger.info("DTO INFO = {} {} {}",response.getBody().getRateName(),response.getBody().getBid(),response.getBody().getAsk());
                         if(response.getStatusCode() == HttpStatus.OK){
                             successful = true;
                         }else{
@@ -221,12 +229,18 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                 }
 
                 RateDto dto = response.getBody();
+                logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 switch (coordinator.onRateStatus("PF2",dto.getRateName())) {
                     case RateStatus.NOT_AVAILABLE:
+                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                         coordinator.onRateAvailable("PF2", dto.getRateName(), dto);
                         break;
                     case RateStatus.AVAILABLE:
+                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
+                        break;
                     case RateStatus.UPDATED:
+                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                         coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
                         break;
                 }
