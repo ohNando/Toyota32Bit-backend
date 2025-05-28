@@ -1,4 +1,4 @@
-package Server.Parser;
+package main.Parser;
 
 import java.util.Arrays;
 import java.util.List;

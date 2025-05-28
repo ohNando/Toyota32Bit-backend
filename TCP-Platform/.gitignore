@@ -22,8 +22,14 @@ bin/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
-.vscode/
-
 ### Mac OS ###
 .DS_Store
+
+### Jar ###
+TCPserver.jar
+
+### Intellij idea ###
+.idea
+
+### iml ###
+TCP-Platform.iml

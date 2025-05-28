@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="72036de7-b7f6-41eb-8226-0d6c6f328a83" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/.idea/libraries/TCPserver.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Auth/LoginHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Config/RateConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Config/ServerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Handler/ClientConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Parser/CommandController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Producer/RateProducer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Rate/Rate.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/Server/Server.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/ServerMain.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/main/User/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Toyota-Backend-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Toyota-Backend-Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/groovy_5_0_0_alpha_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/filebeat.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/logs/toyota-backend.log" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/logs/toyota-backend.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/LoginEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/LoginEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/UserAuth.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/UserAuth.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Cache/HazelcastCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Cache/HazelcastCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Cache/HazelcastConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Cache/HazelcastConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/ClassLoader/LoadSubscriberClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/ClassLoader/LoadSubscriberClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/RestSubscriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/RestSubscriber.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/TCPSubscriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/TCPSubscriber.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/Coordinator.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/Coordinator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventConsumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventProducer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventProducer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/Kafka.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/Kafka.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/MainPlatformApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/MainPlatformApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Mapper/RateMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Mapper/RateMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateCalculator/RateCalculatorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateCalculator/RateCalculatorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/DatabaseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/DatabaseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/RateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/RateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Client/RateClientApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Client/RateClientHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Client/RateDataProducer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/TCP-Platform" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2xirQDmJm0uNsLUInf5tnJddKkk" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/ohnando/Projects/Toyota-Backend-Project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Spring Boot.MainPlatformApplication">
+    <configuration name="MainPlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Main-Platform" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.toyotabackend.mainplatform.MainPlatformApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ToyotaBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Toyota-Backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.toyota.toyotabackend.ToyotaBackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="72036de7-b7f6-41eb-8226-0d6c6f328a83" name="Changes" comment="" />
+      <created>1748431718565</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748431718565</updated>
+      <workItem from="1748431720393" duration="1695000" />
+      <workItem from="1748445279932" duration="326000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

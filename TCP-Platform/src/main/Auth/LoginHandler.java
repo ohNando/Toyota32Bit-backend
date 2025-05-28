@@ -1,9 +1,8 @@
-package Server.Auth;
+package main.Auth;
 
-import java.io.BufferedReader;
+import main.User.User;
+
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Properties;
 
 /**
  * Handles user login authentication.
@@ -23,15 +22,10 @@ public class LoginHandler {
      * @return {@code true} if authentication is successful, {@code false} otherwise.
      * @throws IOException If an I/O error occurs.
      */
-    public static boolean authenticate(BufferedReader input,
-                                       PrintWriter output, Properties properties) throws IOException {
-        String loginAttempt = input.readLine();
+    public static boolean authenticate(String szLine) throws IOException {
+        User adminUser = new User("admin","12345");
 
-        if (loginAttempt == null || !loginAttempt.startsWith("login|")) {
-            return false;
-        }
-
-        String[] parts = loginAttempt.split("\\|");
+        String[] parts = szLine.split("\\|");
         if (parts.length != 3) {
             return false;
         }
@@ -39,10 +33,6 @@ public class LoginHandler {
         String username = parts[1];
         String password = parts[2];
 
-        if (!username.equals(properties.getProperty("login.user.username"))
-                || !password.equals(properties.getProperty("login.user.password"))) {
-            return false;
-        }
-        return true;
+        return username.equals(adminUser.getUsername()) && password.equals(adminUser.getPassword());
     }
 }
