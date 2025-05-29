@@ -1,10 +1,7 @@
-package main.Producer;
+package Producer;
 
-import main.Config.RateConfig;
+import Config.RateConfig;
 
-import java.io.PrintWriter;
-import java.time.Instant;
-import java.util.Properties;
 import java.util.Random;
 
 /**
@@ -27,9 +24,10 @@ public class RateProducer  {
         rateParts[0] = RateConfig.getRateBid(rateName);
         rateParts[1] = RateConfig.getRateAsk(rateName);
 
-        do{
-            randRatePerc = rand.nextFloat();
-        }while(randRatePerc < 0.011);
+        float minPerc = 0.001f;
+        float maxPerc = 0.005f;
+
+        randRatePerc = minPerc + rand.nextFloat() * (maxPerc - minPerc);
 
         incOrDec = rand.nextBoolean();
         if (incOrDec) {

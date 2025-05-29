@@ -1,8 +1,7 @@
-package main.Config;
+package Config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
 import java.util.Properties;
 
 public class ServerConfig {

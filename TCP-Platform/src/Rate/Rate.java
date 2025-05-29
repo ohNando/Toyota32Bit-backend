@@ -1,7 +1,7 @@
-package main.Rate;
+package Rate;
 
-import main.Producer.RateProducer;
-import main.Server.Server;
+import Producer.RateProducer;
+import Server.Server;
 
 import java.time.Instant;
 

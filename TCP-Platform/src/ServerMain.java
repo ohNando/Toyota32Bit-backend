@@ -1,7 +1,4 @@
-package main;
-
-
-import main.Server.Server;
+import Server.Server;
 
 import java.io.IOException;
 

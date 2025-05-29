@@ -1,4 +1,4 @@
-package main.User;
+package User;
 
 public class User {
     private String username;

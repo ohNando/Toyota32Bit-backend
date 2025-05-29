@@ -1,9 +1,9 @@
-package main.Server;
+package Server;
 
-import main.Config.RateConfig;
-import main.Config.ServerConfig;
-import main.Handler.ClientConnection;
-import main.Rate.Rate;
+import Handler.ClientConnection;
+import Rate.Rate;
+import Config.RateConfig;
+import Config.ServerConfig;
 
 import java.io.IOException;
 import java.net.ServerSocket;

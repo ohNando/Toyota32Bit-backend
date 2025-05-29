@@ -1,6 +1,6 @@
 ### IntelliJ IDEA ###
 out/
-!**/src/main/**/out/
+!**/src/**/out/
 !**/src/test/**/out/
 
 ### Eclipse ###
@@ -12,7 +12,7 @@ out/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
+!**/src/**/bin/
 !**/src/test/**/bin/
 
 ### NetBeans ###
@@ -25,11 +25,14 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### Jar ###
-TCPserver.jar
-
 ### Intellij idea ###
 .idea
 
-### iml ###
+### TCP-Platform.iml
 TCP-Platform.iml
+
+### .jar file ###
+TCPServer.jar
+
+### META-INF ###
+META-INF

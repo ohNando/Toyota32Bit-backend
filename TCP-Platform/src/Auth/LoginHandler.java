@@ -1,6 +1,6 @@
-package main.Auth;
+package Auth;
 
-import main.User.User;
+import User.User;
 
 import java.io.IOException;
 

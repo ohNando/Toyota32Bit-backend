@@ -1,8 +1,8 @@
-package main.Handler;
+package Handler;
 
-import main.Auth.LoginHandler;
-import main.Rate.Rate;
-import main.User.User;
+import Auth.LoginHandler;
+import Rate.Rate;
+import User.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -111,7 +111,6 @@ public class ClientConnection extends Thread {
     @Override
     public void run(){
         rateSender.start();
-        String response;
         do{
             try{
                 messageHandler(in.readLine());
