@@ -1,7 +1,7 @@
 package com.toyota.toyotabackend.restapi.controller;
 
 import lombok.AllArgsConstructor;
-import com.toyota.toyotabackend.restapi.dto.RateDto;
+import com.toyota.toyotabackend.restapi.entity.Rate;
 import com.toyota.toyotabackend.restapi.service.RateService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +28,10 @@ public class RateController {
      * </p>
      *
      * @param rateName The name of the currency pair whose rate is requested.
-     * @return A {@link RateDto} object containing the rate details.
+     * @return A {@link Rate} object containing the rate details.
      */
     @GetMapping(path = "/{rateName}")
-    public RateDto getRates(@PathVariable String rateName) {
-        return rateService.getRate(rateName).getBody();
+    public Rate getRates(@PathVariable String rateName) {
+        return rateService.getRate(rateName);
     }
 }

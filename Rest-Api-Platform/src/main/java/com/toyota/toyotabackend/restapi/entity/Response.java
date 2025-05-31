@@ -1,4 +1,4 @@
-package com.toyota.toyotabackend.restapi.dto;
+package com.toyota.toyotabackend.restapi.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseDto {
+public class Response {
     private String status;
     private String message;    
 }

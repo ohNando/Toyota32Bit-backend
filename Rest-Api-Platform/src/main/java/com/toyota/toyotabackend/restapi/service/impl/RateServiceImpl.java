@@ -1,53 +1,38 @@
 package com.toyota.toyotabackend.restapi.service.impl;
 
-import com.toyota.toyotabackend.restapi.dto.RateDto;
-import com.toyota.toyotabackend.restapi.exception.CommandNotValidException;
-import com.toyota.toyotabackend.restapi.exception.RateNotFoundException;
+import com.toyota.toyotabackend.restapi.entity.Rate;
 import com.toyota.toyotabackend.restapi.parser.CommandParser;
 import com.toyota.toyotabackend.restapi.producer.RateProducer;
 import com.toyota.toyotabackend.restapi.service.RateService;
-import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Map;
+import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * Service implementation for handling rate-related operations such as retrieving the rates for a given currency.
  * <p>
- * This service performs rate generation, validation of commands, and returns the rate data in the form of a {@link RateDto}.
+ * This service performs rate generation, validation of commands, and returns the rate data in the form of a {@link Rate}.
  * </p>
  */
 @Service
-@AllArgsConstructor
 public class RateServiceImpl implements RateService {
-    private final RateProducer rateProducer;
-    private final CommandParser parser;
 
     /**
      * Retrieves the rate for the specified currency from the received message.
      *
      * @param receivedMessage The message containing the requested rate and other parameters.
-     * @return A {@link ResponseEntity} containing a {@link RateDto} with the rate data (bid, ask, and timestamp).
-     * @throws CommandNotValidException If the command is invalid (e.g., missing or incorrect rate).
-     * @throws RateNotFoundException If the rate cannot be found for the specified currency.
+     * @return A {@link ResponseEntity} containing a {@link Rate} with the rate data (bid, ask, and timestamp).
      */
     @Override
-    public ResponseEntity<RateDto> getRate(String receivedMessage) {
-        if(!parser.checkCommand(receivedMessage)) {
+    public Rate getRate(String receivedMessage) {
+        if(!CommandParser.checkCommand(receivedMessage)) {
             return null;
         }
+        float[] rateParts = RateProducer.generateRates(receivedMessage);
 
-        Map<String,Double> rates = rateProducer.generateRates(receivedMessage);
-        if(Objects.isNull(rates) || !rates.containsKey("bid") || !rates.containsKey("ask")) {
-            throw new RateNotFoundException("Rate not found: " + receivedMessage);
-        }
-
-        double bid = rates.get("bid");
-        double ask = rates.get("ask");
-
-        return ResponseEntity.ok(new RateDto(receivedMessage, bid, ask, LocalDateTime.now().toString()));
+        return new Rate(receivedMessage, rateParts[0], rateParts[1]);
     }
 }

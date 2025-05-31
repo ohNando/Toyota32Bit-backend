@@ -1,5 +1,8 @@
+### idea files ###
 .idea
 
+### For big logs ###
 logs
 
+### Database ###
 Main-Platform/Data/

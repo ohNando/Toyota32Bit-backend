@@ -1,7 +1,7 @@
 package com.toyota.toyotabackend.restapi.controller;
 
-import com.toyota.toyotabackend.restapi.dto.ResponseDto;
-import com.toyota.toyotabackend.restapi.dto.UserDto;
+import com.toyota.toyotabackend.restapi.entity.Response;
+import com.toyota.toyotabackend.restapi.entity.User;
 import com.toyota.toyotabackend.restapi.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +22,16 @@ public class LoginController {
     /**
      * Endpoint for user login.
      * <p>
-     * This method processes login requests by accepting a {@link UserDto} containing
-     * the user's credentials. It calls the {@link LoginService#authenticate(UserDto)}
+     * This method processes login requests by accepting a {@link User} containing
+     * the user's credentials. It calls the {@link LoginService#authenticate(User)}
      * method to verify the credentials and returns a response indicating success or failure.
      * </p>
      *
-     * @param userDto The user data transfer object containing the login credentials.
+     * @param user The user data transfer object containing the login credentials.
      * @return A {@link ResponseEntity} containing the login status and message.
      */
     @PostMapping("/login")
-    public ResponseDto login(@RequestBody UserDto userDto) {
-        return loginService.authenticate(userDto);
+    public Response login(@RequestBody User user) {
+        return loginService.authenticate(user);
     }
 }

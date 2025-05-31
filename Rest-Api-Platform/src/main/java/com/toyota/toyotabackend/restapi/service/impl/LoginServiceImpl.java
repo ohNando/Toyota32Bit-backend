@@ -1,7 +1,7 @@
 package com.toyota.toyotabackend.restapi.service.impl;
 
-import com.toyota.toyotabackend.restapi.dto.ResponseDto;
-import com.toyota.toyotabackend.restapi.dto.UserDto;
+import com.toyota.toyotabackend.restapi.entity.Response;
+import com.toyota.toyotabackend.restapi.entity.User;
 import com.toyota.toyotabackend.restapi.service.LoginService;
 
 import org.springframework.stereotype.Service;
@@ -16,23 +16,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    private UserDto tempUser;
+    private User tempUser;
 
     public LoginServiceImpl(){
-        tempUser = new UserDto("admin","12345");
+        tempUser = new User("admin","12345");
     }
     /**
      * Authenticates a user by comparing the provided credentials with the stored ones.
      *
-     * @param userDto the user credentials to authenticate.
+     * @param user the user credentials to authenticate.
      * @return {@code true} if the provided username and password match the stored ones; {@code false} otherwise.
      */
     @Override
-    public ResponseDto authenticate(UserDto userDto) {
-        if(userDto.getUsername().equals(tempUser.getUsername()) && 
-        userDto.getPassword().equals(tempUser.getPassword())){
-            return new ResponseDto("success","Login success!");
+    public Response authenticate(User user) {
+        if(user.getUsername().equals(tempUser.getUsername()) &&
+        user.getPassword().equals(tempUser.getPassword())){
+            return new Response("success","Login success!");
         }
-        return new ResponseDto("fail","Wrong password or username!");
+        return new Response("fail","Wrong password or username!");
     }
 }

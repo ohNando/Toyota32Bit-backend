@@ -18,7 +18,7 @@ public class RateProducer  {
      */
     public static float[] generateRate(String rateName) {
         Random rand = new Random();
-        Boolean incOrDec;
+        boolean incOrDec;
         float randRatePerc;
         float[] rateParts = new float[2];
         rateParts[0] = RateConfig.getRateBid(rateName);

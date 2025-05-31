@@ -1,7 +1,7 @@
 package com.toyota.toyotabackend.restapi.service;
 
-import com.toyota.toyotabackend.restapi.dto.ResponseDto;
-import com.toyota.toyotabackend.restapi.dto.UserDto;
+import com.toyota.toyotabackend.restapi.entity.Response;
+import com.toyota.toyotabackend.restapi.entity.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 public interface LoginService {
 
     /**
-     * Authenticates a user based on the provided {@link UserDto}.
+     * Authenticates a user based on the provided {@link User}.
      * <p>
      * This method checks the username and password of the user against stored credentials
      * and returns a boolean indicating whether the authentication was successful.
      * </p>
      *
-     * @param userDto The data transfer object containing the user's login credentials (username and password).
+     * @param user The data transfer object containing the user's login credentials (username and password).
      * @return {@code true} if the user is authenticated, {@code false} otherwise.
      */
-    ResponseDto authenticate(UserDto userDto);  
+    Response authenticate(User user);
 }

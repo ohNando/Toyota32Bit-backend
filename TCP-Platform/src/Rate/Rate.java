@@ -4,7 +4,7 @@ import Producer.RateProducer;
 import Server.Server;
 
 import java.time.Instant;
-
+f
 public class Rate extends Thread {
     private String rateName;
     private float bid;
