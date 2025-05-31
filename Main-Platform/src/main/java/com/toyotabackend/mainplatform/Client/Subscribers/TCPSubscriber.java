@@ -55,11 +55,12 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      * @param _serverPort    the TCP server port
      */
     public TCPSubscriber(String subscriberName,String _serverAddress,int _serverPort){
-        logger.info("Initializing" +subscriberName + "Subscriber");
+        logger.info("Initializing {} Subscriber", subscriberName);
         this.subscribedRates = new ArrayList<>();
         this.serverAddress = _serverAddress;
         this.serverPort = _serverPort;
-        logger.info(subscriberName + "Subscriber initialized!");
+        this.setConnectionStatus(false);
+        logger.info("{} Subscriber initialized!", subscriberName);
     }
 
     /**
@@ -94,6 +95,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     public void connect(String platformName, String username, String password) throws IOException {
         if (!platformName.equals("PF1")) {
             logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
             return;
         }
         try{
@@ -139,6 +141,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     public void disConnect(String platformName, String username, String password) {
         if (!platformName.equals("PF1")) {
             logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
             return;
         }
         try{
@@ -149,7 +152,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
             this.socket.close();    
             logger.info("{} disconnected from {} : {}",platformName,serverAddress,serverPort);
         }catch(IOException error){
-            logger.error("Failed to close socket : ",error.getMessage());
+            logger.error("Failed to close socket : {}",error.getMessage());
         }
         
     }
@@ -164,6 +167,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     public void subscribe(String platformName, String rateName) {
         if (!platformName.equals("PF1")) {
             logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
             return;
         }
         
@@ -183,6 +187,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     public void unSubscribe(String platformName, String rateName) {
         if (!platformName.equals("PF1")) {
             logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
             return;
         }
         logger.info("{} is unsubscribing from {}",platformName,rateName);
@@ -198,7 +203,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     public void run() {
         logger.info("Subscriber is starting.");
         String response;
-        logger.info("CONNECTION STATUS = ",this.connectionStatus);
+        logger.info("CONNECTION STATUS = {}",this.connectionStatus);
         while(this.connectionStatus){
             try{
                 response = input.readLine();
@@ -208,25 +213,29 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
                     continue;
                 }
                 RateDto dto = RateMapper.stringToDTO(response);
-                logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                for(String subscribedRate : subscribedRates){
-                    if(dto.getRateName().equals("PF1" + "_" + subscribedRate)){
-                        switch (coordinator.onRateStatus("PF1", dto.getRateName())) {
-                            case RateStatus.NOT_AVAILABLE:
-                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                coordinator.onRateAvailable("PF1",dto.getRateName(),dto);
-                                break;
-                            case RateStatus.AVAILABLE:
-                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                coordinator.onRateUpdate("PF1", dto.getRateName(), dto);
-                                break;
-                            case RateStatus.UPDATED:
-                                logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                coordinator.onRateUpdate("PF1",dto.getRateName(),dto);
-                                break;
+                if(dto != null){
+                    logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+
+                    for(String subscribedRate : subscribedRates){
+                        if(dto.getRateName().equals("PF1" + "_" + subscribedRate)){
+                            switch (coordinator.onRateStatus("PF1", dto.getRateName())) {
+                                case RateStatus.NOT_AVAILABLE:
+                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateAvailable("PF1",dto.getRateName(),dto);
+                                    break;
+                                case RateStatus.AVAILABLE:
+                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateUpdate("PF1", dto.getRateName(), dto);
+                                    break;
+                                case RateStatus.UPDATED:
+                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateUpdate("PF1",dto.getRateName(),dto);
+                                    break;
+                            }
                         }
                     }
                 }
+
             }catch(IOException error){
                 logger.error("PF1" + "Subscriber Error: {}", error.getMessage());
             }

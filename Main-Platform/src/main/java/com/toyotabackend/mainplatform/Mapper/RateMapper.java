@@ -55,23 +55,14 @@ public class RateMapper {
      * @return a {@link RateDto} containing the parsed data, or null if the format is incorrect
      */
     public static RateDto stringToDTO(String response) {
+        //PF1_USDTRY|36.522087|36.47199|2025-05-29T14:53:01.253475626Z
         String[] parts = response.split("\\|");
         if (parts.length < 3) return null;
 
         RateDto dto = new RateDto();
-        String[] nameParts = parts[0].split("_");
-        dto.setRateName(nameParts.length > 1 ? nameParts[1] : parts[0]);
-
-        String[] bidParts = parts[1].split(":");
-        if (bidParts.length == 3 && bidParts[1].equals("number")) {
-            dto.setBid(Float.parseFloat(bidParts[2]));
-        }
-
-        String[] askParts = parts[2].split(":");
-        if (askParts.length == 3 && askParts[1].equals("number")) {
-            dto.setAsk(Float.parseFloat(askParts[2]));
-        }
-        
+        dto.setRateName(parts[0]);
+        dto.setBid(Float.parseFloat(parts[1]));
+        dto.setAsk(Float.parseFloat(parts[2]));
         Instant timestamp = Instant.parse(parts[3]);
         dto.setTimestamp(timestamp);
         return dto;

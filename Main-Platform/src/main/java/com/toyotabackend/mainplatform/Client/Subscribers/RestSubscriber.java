@@ -25,7 +25,6 @@ import java.util.List;
  * RestSubscriber is a data provider implementation that fetches rate information
  * from a REST API based on a subscription model. It runs in a separate thread and
  * repeatedly polls the API for updates for subscribed rate names.
- *
  * This class is specifically designed to work with platform "PF2".
  */
 @Getter
@@ -46,7 +45,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * Constructs a new RestSubscriber with a reference to the Coordinator
      * to receive rate updates and status notifications.
      *
-     * @param subscriberName name of the subscriber
+     * @param _subscriberName name of the subscriber
      * @param baseUrl url of the Rest endpoint
      */
     public RestSubscriber(String _subscriberName,String baseUrl) throws IOException{
@@ -59,7 +58,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
         this.restTemplate = new RestTemplate();
         this.setConnectionStatus(false);
         this.subscribedRates = new ArrayList<>();
-        logger.info("Subscriber initialialized" + subscriberName);
+        logger.info("Subscriber initialized" + subscriberName);
     }
 
     @Override
@@ -77,7 +76,6 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * @param platformName the platform identifier (must be "PF2")
      * @param username     the username for login
      * @param password     the password for login
-     * @return true if login is successful, false otherwise
      */
     @Override
     public void connect(String platformName, String username, String password) {
@@ -97,7 +95,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                 this.setConnectionStatus(false);
                 return;
             }
-            logger.info("Connected to {} , status code:",this.loginUrl,response.getStatusCode());
+            logger.info("Connected to {} , status code: {}",this.loginUrl,response.getStatusCode());
             
             
             UserAuth loginResponse = response.getBody();
@@ -105,7 +103,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
             if (loginResponse.getStatus().equals("success")) {
                 logger.info("Successfully connected to {} with username {}", baseUrl, username);
             } else {
-                logger.warn("Failed to connect to {} with username {}", baseUrl, username);
+                logger.warn("Failed to login to {} with username {}", baseUrl, username);
                 this.setConnectionStatus(false);
                 return;
             }
@@ -118,7 +116,6 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
         } catch (Exception e) {
             this.setConnectionStatus(false);
             logger.warn("Failed to connect to {} with username {}", baseUrl, username);
-            return;
         }
     }
 
@@ -129,7 +126,6 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * @param platformName the platform identifier
      * @param username     the username
      * @param password     the password
-     * @return true always, unless platform name is invalid
      */
     @Override
     public void disConnect(String platformName, String username, String password){
@@ -178,8 +174,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
 
         logger.info("{} is unsubscribing from {}",platformName,rateName);
         String key = platformName + "_" + rateName;
-        if(subscribedRates.contains(key))
-            subscribedRates.remove(key);
+        subscribedRates.remove(key);
             logger.info("{} is unsubscribed from {}",platformName,rateName);
     }
 
@@ -244,8 +239,6 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                         coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
                         break;
                 }
-
-
             }
 
             try{

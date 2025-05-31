@@ -8,15 +8,6 @@ package com.toyota.toyotabackend.restapi.parser;
  * </p>
  */
 public interface CommandParser {
-
-    /**
-     * Validates if the given currency rate is allowed.
-     *
-     * @param rateName the currency rate to validate.
-     * @return {@code true} if the rate is valid, otherwise {@code false}.
-     */
-    boolean isValidRate(String rateName);
-
     /**
      * Validates if the given platform name matches the expected platform name.
      *
@@ -24,14 +15,6 @@ public interface CommandParser {
      * @return {@code true} if the platform name is valid, otherwise {@code false}.
      */
     boolean isValidPlatformName(String platformName);
-
-    /**
-     * Extracts the currency rate from the received message.
-     *
-     * @param receivedMessage the message from which to extract the currency rate.
-     * @return the extracted currency rate, or an empty string if not found.
-     */
-    String getRate(String receivedMessage);
 
     /**
      * Extracts the platform name from the received message.
@@ -47,5 +30,5 @@ public interface CommandParser {
      * @param receivedMessage the message to validate.
      * @return a validation result message indicating success or failure, including details on the validation error.
      */
-    String checkCommand(String receivedMessage);
+    boolean checkCommand(String receivedMessage);
 }

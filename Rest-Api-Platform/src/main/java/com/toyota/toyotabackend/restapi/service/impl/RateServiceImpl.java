@@ -36,22 +36,18 @@ public class RateServiceImpl implements RateService {
      */
     @Override
     public ResponseEntity<RateDto> getRate(String receivedMessage) {
-        String checkedMessage = parser.checkCommand(receivedMessage);
-
-        if(!checkedMessage.equals("OK")) {
-            throw new CommandNotValidException(checkedMessage);
+        if(!parser.checkCommand(receivedMessage)) {
+            return null;
         }
 
-        String rateName = parser.getRate(receivedMessage);
-        Map<String,Double> rates = rateProducer.generateRates(rateName);
-
+        Map<String,Double> rates = rateProducer.generateRates(receivedMessage);
         if(Objects.isNull(rates) || !rates.containsKey("bid") || !rates.containsKey("ask")) {
-            throw new RateNotFoundException("Rate not found: " + rateName);
+            throw new RateNotFoundException("Rate not found: " + receivedMessage);
         }
 
         double bid = rates.get("bid");
         double ask = rates.get("ask");
 
-        return ResponseEntity.ok(new RateDto(rateName, bid, ask, LocalDateTime.now().toString()));
+        return ResponseEntity.ok(new RateDto(receivedMessage, bid, ask, LocalDateTime.now().toString()));
     }
 }

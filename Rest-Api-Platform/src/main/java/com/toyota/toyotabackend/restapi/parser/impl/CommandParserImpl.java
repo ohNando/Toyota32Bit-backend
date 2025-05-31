@@ -38,22 +38,6 @@ public class CommandParserImpl implements CommandParser {
     }
 
     /**
-     * Checks if the given currency rate is valid by comparing it against a list of allowed rates from the properties.
-     *
-     * @param rateName the name of the currency rate to validate.
-     * @return {@code true} if the rate is valid, otherwise {@code false}.
-     */
-    @Override
-    public boolean isValidRate(String rateName) {
-        String allowedRates = properties.getProperty("rates.allowed-rates");
-        if(allowedRates != null){
-            List<String> validRates = Arrays.asList(allowedRates.split(","));
-            return validRates.contains(rateName);
-        }
-        return false;
-    }
-
-    /**
      * Checks if the given platform name matches the platform name specified in the configuration properties.
      *
      * @param platformName the name of the platform to validate.
@@ -71,11 +55,6 @@ public class CommandParserImpl implements CommandParser {
      * @param receivedMessage the message from which to extract the currency rate.
      * @return the currency rate, or an empty string if not found.
      */
-    @Override
-    public String getRate(String receivedMessage) {
-        String[] platformParts = receivedMessage.split("_");
-        return platformParts.length > 1 ? platformParts[1] : "";
-    }
 
     /**
      * Extracts the platform name from the received message.
@@ -96,16 +75,12 @@ public class CommandParserImpl implements CommandParser {
      * @return a validation result message indicating success or the type of error.
      */
     @Override
-    public String checkCommand(String receivedMessage) {
+    public boolean checkCommand(String receivedMessage) {
+        if(receivedMessage.isEmpty()) return false;
         String platformName = getPlatformName(receivedMessage);
-        String currencyRate = getRate(receivedMessage);
+        if(platformName.isEmpty()) return false;
+        if(!isValidPlatformName(platformName)) return false;
 
-        if(platformName.isEmpty()) return "(-)|Missing platform name";
-        if(currencyRate.isEmpty()) return "(-)|Missing currency rate";
-
-        if(!isValidPlatformName(platformName)) return "(-)|Invalid platform name";
-        if(!isValidRate(currencyRate)) return "(-)|Invalid currency rate";
-
-        return "OK";
+        return true;
     }
 }

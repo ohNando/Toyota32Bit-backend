@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Data ###
-Main-Platform/data/
+data
