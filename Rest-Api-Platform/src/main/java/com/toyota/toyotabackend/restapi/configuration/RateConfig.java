@@ -11,7 +11,7 @@ public class RateConfig {
         Properties prop = new Properties();
         try(InputStream input = RateConfig.class.getClassLoader().getResourceAsStream(configPath)){
             if(input == null){
-                System.err.println("Resource not found: " + configPath);
+                throw new IOException("Resource not found: " + configPath);
             }
             prop.load(input);
         } catch (IOException e) {

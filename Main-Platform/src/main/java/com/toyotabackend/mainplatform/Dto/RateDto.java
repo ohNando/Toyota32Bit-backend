@@ -3,6 +3,7 @@ package com.toyotabackend.mainplatform.Dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 /**
@@ -14,7 +15,7 @@ import java.time.Instant;
  */
 @Getter
 @Setter
-public class RateDto {
+public class RateDto implements Serializable {
 
     /**
      * The name of the rate (e.g., currency pair like USDTRY).

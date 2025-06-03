@@ -37,6 +37,7 @@ import java.util.List;
 public class TCPSubscriber extends Thread implements SubscriberInterface { //Subscriber 2
     private String serverAddress;
     private int serverPort;
+    private String subscriberName;
 
     private List<String> subscribedRates;
     private CoordinatorInterface coordinator;
@@ -56,6 +57,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     public TCPSubscriber(String subscriberName,String _serverAddress,int _serverPort){
         logger.info("Initializing {} Subscriber", subscriberName);
+        this.subscriberName = subscriberName;
         this.subscribedRates = new ArrayList<>();
         this.serverAddress = _serverAddress;
         this.serverPort = _serverPort;
@@ -218,18 +220,18 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
 
                     for(String subscribedRate : subscribedRates){
                         if(dto.getRateName().equals("PF1" + "_" + subscribedRate)){
-                            switch (coordinator.onRateStatus("PF1", dto.getRateName())) {
+                            switch (coordinator.onRateStatus(this.subscriberName, dto.getRateName())) {
                                 case RateStatus.NOT_AVAILABLE:
-                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                    coordinator.onRateAvailable("PF1",dto.getRateName(),dto);
+                                    logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateAvailable(this.subscriberName,dto.getRateName(),dto);
                                     break;
                                 case RateStatus.AVAILABLE:
-                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                    coordinator.onRateUpdate("PF1", dto.getRateName(), dto);
+                                    logger.info("Fetched rate in AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
                                     break;
                                 case RateStatus.UPDATED:
-                                    logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                                    coordinator.onRateUpdate("PF1",dto.getRateName(),dto);
+                                    logger.info("Fetched rate in UPDATED: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                                    coordinator.onRateUpdate(this.subscriberName,dto.getRateName(),dto);
                                     break;
                             }
                         }

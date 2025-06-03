@@ -1,15 +1,14 @@
 package com.toyota.toyotabackend.restapi.service.impl;
 
+import com.toyota.toyotabackend.restapi.dto.RateDto;
 import com.toyota.toyotabackend.restapi.entity.Rate;
-import com.toyota.toyotabackend.restapi.parser.CommandParser;
-import com.toyota.toyotabackend.restapi.producer.RateProducer;
+import com.toyota.toyotabackend.restapi.list.RateList;
+import com.toyota.toyotabackend.restapi.mapper.RateMapper;
 import com.toyota.toyotabackend.restapi.service.RateService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Service implementation for handling rate-related operations such as retrieving the rates for a given currency.
@@ -19,6 +18,8 @@ import java.util.Objects;
  */
 @Service
 public class RateServiceImpl implements RateService {
+    @Autowired
+    private RateList rateList;
 
     /**
      * Retrieves the rate for the specified currency from the received message.
@@ -27,12 +28,11 @@ public class RateServiceImpl implements RateService {
      * @return A {@link ResponseEntity} containing a {@link Rate} with the rate data (bid, ask, and timestamp).
      */
     @Override
-    public Rate getRate(String receivedMessage) {
-        if(!CommandParser.checkCommand(receivedMessage)) {
-            return null;
-        }
-        float[] rateParts = RateProducer.generateRates(receivedMessage);
+    public RateDto getRate(String receivedMessage) {
 
-        return new Rate(receivedMessage, rateParts[0], rateParts[1]);
+        Rate rate = rateList.getRate(receivedMessage);
+        System.out.println(receivedMessage);
+        RateDto dto = RateMapper.rateToDto(rate);
+        return dto;
     }
 }

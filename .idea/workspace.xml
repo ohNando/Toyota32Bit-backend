@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72036de7-b7f6-41eb-8226-0d6c6f328a83" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/dto/RateDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/list/RateList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/mapper/RateMapper.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/META-INF/MANIFEST.MF" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Auth/LoginHandler.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Config/RateConfig.java" afterDir="false" />
@@ -17,7 +20,6 @@
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/ServerMain.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/User/User.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
@@ -34,6 +36,8 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/RestSubscriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/RestSubscriber.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/TCPSubscriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Client/Subscribers/TCPSubscriber.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/Coordinator.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/Coordinator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/CoordinatorInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Coordinator/CoordinatorInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Dto/RateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Dto/RateDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventConsumer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventProducer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/EventProducer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/Kafka.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Kafka/Kafka.java" afterDir="false" />
@@ -44,10 +48,16 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/RateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/RateService/RateService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/exception/CommandNotValidException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/exception/RateNotFoundException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/exception/UserNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/configuration/RateConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/configuration/RateConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/controller/RateController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/controller/RateController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/entity/Rate.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/entity/Rate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/parser/CommandParser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/producer/RateProducer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/LoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/LoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/RateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/RateService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/impl/RateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/java/com/toyota/toyotabackend/restapi/service/impl/RateServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/misc.xml" beforeDir="false" />
@@ -59,6 +69,7 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Client/RateDataProducer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/toyota-backend.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +77,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Main-Platform" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -77,26 +88,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Spring Boot.MainPlatformApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/ohnando/Projects/Toyota-Backend-Project/Rest-Api-Platform&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.MainPlatformApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/ohnando/emirhanProje/toyota-project-2025/toyota-main-rate-api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Spring Boot.MainPlatformApplication">
     <configuration name="MainPlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="Main-Platform" />
@@ -137,6 +148,8 @@
       <workItem from="1748700946559" duration="1669000" />
       <workItem from="1748702882132" duration="246000" />
       <workItem from="1748706402258" duration="103000" />
+      <workItem from="1748970693638" duration="64000" />
+      <workItem from="1748970766049" duration="3583000" />
     </task>
     <servers />
   </component>

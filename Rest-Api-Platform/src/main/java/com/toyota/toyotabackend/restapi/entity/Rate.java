@@ -1,12 +1,10 @@
 package com.toyota.toyotabackend.restapi.entity;
 
-import com.toyota.toyotabackend.restapi.producer.RateProducer;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.time.Instant;
+import java.util.Random;
 
 /**
  * A Data Transfer Object (DTO) representing a currency rate.
@@ -15,8 +13,6 @@ import java.time.Instant;
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Rate extends Thread{
     /**
      * The name of the currency pair.
@@ -41,9 +37,9 @@ public class Rate extends Thread{
     private boolean isActive = true;
 
     public Rate(String _rateName, float _bid, float _ask) {
-        setRateName(_rateName);
-        setBid(_bid);
-        setAsk(_ask);
+        this.setRateName(_rateName);
+        this.setBid(_bid);
+        this.setAsk(_ask);
     }
 
     public void stopRate(){
@@ -52,16 +48,31 @@ public class Rate extends Thread{
 
     @Override
     public void run(){
+        Random random = new Random();
+        boolean incOrDec;
+        float randRatePerc;
+
         do{
-            float[] rateParts = RateProducer.generateRates(this.rateName);
-            setBid(rateParts[0]);
-            setAsk(rateParts[1]);
+            float minPerc = 0.001f;
+            float maxPerc = 0.005f;
+
+            randRatePerc = minPerc + random.nextFloat() * (maxPerc - minPerc);
+
+            incOrDec = random.nextBoolean();
+            if (incOrDec) {
+                setBid(bid + (bid * randRatePerc));
+                setAsk(ask + (ask * randRatePerc));
+            }else{
+                setBid(bid - (bid * randRatePerc));
+                setAsk(ask - (ask * randRatePerc));
+            }
 
             try{
                 Thread.sleep(1000);
             }catch(InterruptedException e){
                 throw new RuntimeException(e);
             }
+
             setRateUpdateTime(Instant.now());
         }while(isActive);
     }

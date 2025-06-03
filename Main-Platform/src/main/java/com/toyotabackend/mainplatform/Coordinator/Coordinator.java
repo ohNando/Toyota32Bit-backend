@@ -68,6 +68,8 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         this.rateStatusMap = new HashMap<>();
         for (String rawRate : rawRateNames) {
             for (String subscriberName : subscriberNames) {
+                logger.info("STATUS -- Subscriber name: " + subscriberName);
+                logger.info("STATUS -- Rate name: " + rawRate);
                 rateStatusMap.put(subscriberName + "_" + rawRate, RateStatus.NOT_AVAILABLE);
             }
         }
@@ -300,6 +302,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
      */
     @Override
     public RateStatus onRateStatus(String platformName, String rateName) {
+        logger.info("Rate status for platform {} -- rateName {} -- status {}", platformName, rateName, this.rateStatusMap.get(rateName));
         return rateStatusMap.get(rateName);
     }
 }

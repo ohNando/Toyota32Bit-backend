@@ -225,18 +225,18 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
 
                 RateDto dto = response.getBody();
                 logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                switch (coordinator.onRateStatus("PF2",dto.getRateName())) {
+                switch (coordinator.onRateStatus(this.subscriberName,dto.getRateName())) {
                     case RateStatus.NOT_AVAILABLE:
-                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateAvailable("PF2", dto.getRateName(), dto);
+                        logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                        coordinator.onRateAvailable(this.subscriberName, dto.getRateName(), dto);
                         break;
                     case RateStatus.AVAILABLE:
-                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
+                        logger.info("Fetched rate in AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                        coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
                         break;
                     case RateStatus.UPDATED:
-                        logger.info("Fetched rate : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateUpdate("PF2", dto.getRateName(), dto);
+                        logger.info("Fetched rate in UPDATED: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                        coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
                         break;
                 }
             }

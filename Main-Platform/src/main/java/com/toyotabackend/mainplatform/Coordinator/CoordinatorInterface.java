@@ -45,8 +45,7 @@ public interface CoordinatorInterface {
      *
      * @param platformName the name of the platform
      * @param rateName     the name of the rate
-     * @param rateFields   the updated rate fields containing the new bid/ask values
-     * @throws JsonProcessingException if an error occurs during the processing of the rate update
+     * @param dto          the rate data transfer object containing the rate information
      */
     void onRateUpdate(String platformName, String rateName, RateDto dto);
 
@@ -55,7 +54,6 @@ public interface CoordinatorInterface {
      *
      * @param platformName the name of the platform
      * @param rateName     the name of the rate
-     * @param rateStatus   the updated status of the rate
      */
     RateStatus onRateStatus(String platformName, String rateName);
 }

@@ -2,7 +2,7 @@ package com.toyota.toyotabackend.restapi.service;
 
 import com.toyota.toyotabackend.restapi.entity.Response;
 import com.toyota.toyotabackend.restapi.entity.User;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * Service interface for handling user authentication.
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * It defines a method for validating the login information of a user.
  * </p>
  */
-@Service
+@Component
 public interface LoginService {
 
     /**
