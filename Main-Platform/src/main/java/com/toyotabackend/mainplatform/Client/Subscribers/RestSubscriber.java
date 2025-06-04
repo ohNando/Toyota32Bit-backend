@@ -18,6 +18,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,18 +185,27 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      */
     @Override
     public void run() {
+        logger.info("Subscriber is starting.");
         while(connectionStatus){
             for(String rateName : subscribedRates){
                 String requestURL = baseUrl + "/" + rateName;
                 ResponseEntity<RateDto> response = null;
                 
                 int countOfTry = 0;
-                boolean successful = false; 
-                logger.info("Subscriber is starting.");
+                boolean successful = false;
                 while(countOfTry < 3 && !successful){
                     try{
                         response = restTemplate.getForEntity(requestURL, RateDto.class);
-                        logger.info("DTO INFO = {} {} {}",response.getBody().getRateName(),response.getBody().getBid(),response.getBody().getAsk());
+                        if(response.getBody() != null && response.getBody().getRateUpdateTime() == null){
+                            logger.debug("RateUpdateTime for {} was null , set to current time.",
+                                    response.getBody().getRateUpdateTime());
+                            response.getBody().setRateUpdateTime(Instant.now());
+                        }
+                        logger.info("DTO INFO (from rest api)= {} {} {} Time = {}",
+                                response.getBody().getRateName(),
+                                response.getBody().getBid(),
+                                response.getBody().getAsk(),
+                                response.getBody().getRateUpdateTime());
                         if(response.getStatusCode() == HttpStatus.OK){
                             successful = true;
                         }else{
@@ -219,12 +229,11 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                 }
 
                 if(!successful){
-                    logger.error("Unable to get data for {} after 5 retries",rateName);
+                    logger.error("Unable to get data for {} after 3 retries",rateName);
                     continue;
                 }
 
                 RateDto dto = response.getBody();
-                logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 switch (coordinator.onRateStatus(this.subscriberName,dto.getRateName())) {
                     case RateStatus.NOT_AVAILABLE:
                         logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
@@ -245,6 +254,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                 Thread.sleep(1000);
             }catch(InterruptedException e){
                 logger.error("PF2 subscriber Error : {}",e.getMessage());
+                this.connectionStatus = false;
             }
         }
     }

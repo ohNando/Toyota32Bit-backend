@@ -15,7 +15,6 @@ import com.toyotabackend.mainplatform.RateService.RateService;
 /**
  * Service class responsible for calculating rates, either raw or derived, 
  * using Groovy scripts to process the rate data.
- * 
  * The class leverages Groovy to execute scripts for rate calculation based on bid and ask values
  * and then returns the calculated rate in the form of a {@link RateDto}.
  */
@@ -59,9 +58,9 @@ public class RateCalculatorService {
             Method method = groovyClass.getMethod("calculateAverageRate", float[].class, float[].class);
             return (float[]) method.invoke(groovyObject, bids, asks);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            logger.error("Error executing Groovy script 'RawRateCalculator'",e);
+            throw new RuntimeException("Failed to execute raw rate calculating script",e);
         }
-        return null;
     }
 
     /**
@@ -83,9 +82,9 @@ public class RateCalculatorService {
             Method method = groovyClass.getMethod("calculateDerivedAverageRate", float[].class, float[].class, float[].class, float[].class);
             return (float[]) method.invoke(groovyObject, bidRates1, askRates1, bidRates2, askRates2);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            logger.error("Error executing Groovy script 'derivedRateCalculator'",e);
+            throw new RuntimeException("Failed to execute derived rate calculating script",e);
         }
-        return null;
     }
 
     /**
@@ -133,9 +132,14 @@ public class RateCalculatorService {
         }
 
         float[] rateFields = calculateRawRatesWithMethod(bids, asks);
+        if(rateFields == null || rateFields.length < 2) {
+            logger.warn("Raw rate calculation script failed or returned invalid data for" +
+                    "rate {} .Received array length {}", rateName, (rateFields != null ? rateFields.length : 0));
+            return null;
+        }
         logger.info("Raw Rate calculated : {}", rateName);
 
-        return new RateDto(rateName, rateFields[0], rateFields[1], rawRateList.get(0).getTimestamp());
+        return new RateDto(rateName, rateFields[0], rateFields[1], rawRateList.getFirst().getRateUpdateTime());
     }
 
     /**
@@ -174,12 +178,13 @@ public class RateCalculatorService {
         }
 
         float[] rateFields = calculateDerivedRatesWithMethod(rateBids1, rateAsks1, rateBids2, rateAsks2);
-        if (rateFields == null) {
-            logger.warn("Calculator script returned null");
-            throw new IllegalStateException("Calculator script returned null");
+        if(rateFields == null || rateFields.length < 2){
+            logger.warn("Derived rate calculation script failed or returned invalid data for" +
+                    "rate {}.Received array length {}", rateName, (rateFields != null ? rateFields.length : 0));
+            return null;
         }
 
         logger.info("Derived rate calculated : {}", rateName);
-        return new RateDto(rateName, rateFields[0], rateFields[1], rawRateList2.get(0).getTimestamp());
+        return new RateDto(rateName, rateFields[0], rateFields[1], rawRateList2.getFirst().getRateUpdateTime());
     }
 }

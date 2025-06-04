@@ -18,7 +18,7 @@ import java.time.Instant;
 public class RateDto implements Serializable {
 
     /**
-     * The name of the rate (e.g., currency pair like USDTRY).
+     * The name of the rate (e.g., currency pair like 'USDTRY').
      */
     private String rateName;
 
@@ -35,16 +35,16 @@ public class RateDto implements Serializable {
     /**
      * The timestamp when the rate was last updated, in ISO-8601 format.
      */
-    private Instant timestamp;
+    private Instant RateUpdateTime;
 
     private RateStatus status;
-    public RateDto() {};
+    public RateDto() {}
 
     public RateDto(String _rateName,float _bid,float _ask,Instant _timestamp){
         this.setRateName(_rateName);
         this.setAsk(_ask);
         this.setBid(_bid);
-        this.setTimestamp(_timestamp);
+        this.setRateUpdateTime(_timestamp);
         this.setStatus(RateStatus.NOT_AVAILABLE);
     }
 }

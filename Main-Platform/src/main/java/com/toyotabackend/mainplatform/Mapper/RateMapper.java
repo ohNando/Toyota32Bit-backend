@@ -26,7 +26,7 @@ public class RateMapper {
         dto.setRateName(rate.rateName);
         dto.setAsk(rate.ask);
         dto.setBid(rate.bid);
-        dto.setTimestamp(rate.rateUpdateTime);
+        dto.setRateUpdateTime(rate.rateUpdateTime);
 
         return dto;
     }
@@ -42,7 +42,7 @@ public class RateMapper {
         rate.rateName = dto.getRateName();
         rate.bid = dto.getBid();
         rate.ask = dto.getAsk();
-        rate.rateUpdateTime = dto.getTimestamp();
+        rate.rateUpdateTime = dto.getRateUpdateTime();
 
         return rate;
     }
@@ -64,7 +64,7 @@ public class RateMapper {
         dto.setBid(Float.parseFloat(parts[1]));
         dto.setAsk(Float.parseFloat(parts[2]));
         Instant timestamp = Instant.parse(parts[3]);
-        dto.setTimestamp(timestamp);
+        dto.setRateUpdateTime(timestamp);
         return dto;
     }
 
@@ -79,7 +79,7 @@ public class RateMapper {
         String rateName = dto.getRateName();
         String bid = Float.toString(dto.getBid());
         String ask = Float.toString(dto.getAsk());
-        String timestamp = dto.getTimestamp().toString();
+        String timestamp = dto.getRateUpdateTime().toString();
         String key = rateName + "|" + bid + "|" + ask + "|" + timestamp;
         return key;
     }

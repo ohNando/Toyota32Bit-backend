@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
@@ -31,18 +32,21 @@ public class Rate {
     /**
      * The bid price for the rate. Cannot be null.
      */
+    @Setter
     @Column(nullable = false)
     public float bid;
 
     /**
      * The ask price for the rate. Cannot be null.
      */
+    @Setter
     @Column(nullable = false)
     public float ask;
 
     /**
      * Timestamp indicating the last time this rate was updated. Cannot be null.
      */
+    @Setter
     @Column(nullable = false)
     public Instant rateUpdateTime;
 

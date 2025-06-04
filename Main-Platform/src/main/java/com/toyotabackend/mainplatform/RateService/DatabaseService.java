@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,39 @@ public class DatabaseService {
      * 
      * @param dtoList List of RateDto objects to be saved.
      */
+    @Transactional // For this entire method run as a single database operation
     public void updateRates(List<RateDto> dtoList) {
-        logger.info("Rate saving is beginning...");
-        List<Rate> rateList = new ArrayList<>();
-        for (RateDto dto : dtoList) {
-            rateList.add(RateMapper.mapToRate(dto));
+        if(dtoList == null || dtoList.isEmpty()) {
+            logger.info("Rate list is empty or null. No action will be performed.");
+            return;
         }
-        repository.saveAll(rateList);
-        logger.info("Rates are saved for database");
+        logger.info("Rate saving is beginning...");
+        List<Rate> rateToSave = new ArrayList<>();
+        for (RateDto dto : dtoList) {
+            if(dto == null || dto.getRateName() == null) {
+                logger.warn("Skipping null rate!");
+                continue;
+            }
+            Optional<Rate> existRate = repository.findByRateName(dto.getRateName());
+            Rate rateToPersist;
+            if(existRate.isPresent()) {
+                rateToPersist = existRate.get();
+                logger.info("Exist rate is found {}. Updating rate...", dto.getRateName());
+                rateToPersist.setBid(dto.getBid());
+                rateToPersist.setAsk(dto.getAsk());
+                rateToPersist.setRateUpdateTime(dto.getRateUpdateTime());
+            }else{
+                logger.info("No existing rate for {}. Creating new rate...", dto.getRateName());
+                rateToPersist = RateMapper.mapToRate(dto);
+            }
+            rateToSave.add(rateToPersist);
+        }
+        if(!rateToSave.isEmpty()) {
+            repository.saveAll(rateToSave);
+            logger.info("{} rates saved/updated in database.",rateToSave.size());
+        }else{
+            logger.info("No valid rate to save/update.");
+        }
     }
 
     /**
@@ -55,12 +81,12 @@ public class DatabaseService {
      */
     public RateDto getLastestRate(String rateName) {
         logger.info("Last rate is fetching : {}", rateName);
-        Optional<Rate> rate = repository.findTopByOrderByDbUpdateTimeDesc();
-        if (rate.isEmpty()) {
+        Optional<Rate> rateToFetch = repository.findTopByOrderByDbUpdateTimeDesc();
+        if (rateToFetch.isEmpty()) {
             logger.warn("Rate is not found : {}", rateName);
             return null;
         }
         logger.info("Rate {} fetched from database", rateName);
-        return RateMapper.mapToRateDto(rate.get());
+        return RateMapper.mapToRateDto(rateToFetch.get());
     }
 }
