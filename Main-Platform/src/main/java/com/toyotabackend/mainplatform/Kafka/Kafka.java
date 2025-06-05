@@ -16,7 +16,6 @@ import com.toyotabackend.mainplatform.Dto.RateDto;
  * </p>
  */
 public class Kafka {
-    private final EventConsumer consumer;
     private final EventProducer producer;
 
     /**
@@ -24,7 +23,6 @@ public class Kafka {
      * This allows both consumption and production of rate data to/from Kafka.
      */
     public Kafka() {
-        this.consumer = new EventConsumer();
         this.producer = new EventProducer();
     }
 
@@ -36,15 +34,5 @@ public class Kafka {
      */
     public void produceRate(RateDto dto) {
         producer.produceRate(dto);
-    }
-
-    /**
-     * Consumes rate data from Kafka.
-     * This method uses the EventConsumer to retrieve rate data from the "rates" topic.
-     *
-     * @return a list of RateDto objects representing the consumed rate data
-     */
-    public List<RateDto> consumeRate() {
-        return consumer.consumeRate();
     }
 }

@@ -85,6 +85,16 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
         return this.connectionStatus; 
     }
 
+    @Override
+    public boolean checkPlatformName(String platformName){
+        if (!platformName.equals("PF2")) {
+            logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
+            return false ;
+        }
+        return true;
+    }
+
     /**
      * Connects to the TCP platform using username and password.
      *
@@ -95,11 +105,8 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     @Override
     public void connect(String platformName, String username, String password) throws IOException {
-        if (!platformName.equals("PF1")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         try{
             socket = new Socket(serverAddress, serverPort);
         }catch(ConnectException error){
@@ -141,11 +148,8 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     @Override
     public void disConnect(String platformName, String username, String password) {
-        if (!platformName.equals("PF1")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         try{
             this.input.close();
             this.output.close();
@@ -167,11 +171,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     @Override
     public void subscribe(String platformName, String rateName) {
-        if (!platformName.equals("PF1")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
         
         logger.info("{} is subscribing to {}",platformName,rateName);
         this.output.println("subscribe|" + platformName + "_" + rateName);
@@ -187,11 +187,8 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      */
     @Override
     public void unSubscribe(String platformName, String rateName) {
-        if (!platformName.equals("PF1")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         logger.info("{} is unsubscribing from {}",platformName,rateName);
         this.output.println("unsubscribe|" + platformName + "_" + rateName);
         this.subscribedRates.remove(rateName);

@@ -76,7 +76,7 @@ public class EventProducer {
         if (error != null) {
             logger.warn(error.getMessage());
         } else {
-            logger.info("Produced event to topic {}: key = %-10s value = {}", topic, rateName, dto.toString());
+            logger.info("Produced event to topic {}: key = %-10s value = {}", topic, dto.toString());
         }
     }
 }

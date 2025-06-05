@@ -16,14 +16,7 @@ import org.springframework.context.annotation.Configuration;
  */
 public class AppConfig {
     
-    private static String propertiesPath = "application.properties"; // Path to the properties file
-
-    /**
-     * Returns the path to the properties file.
-     *
-     * @return propertiesPath The path to the properties file
-     */
-    String getPath(){ return propertiesPath; }
+    private static final String propertiesPath = "application.properties"; // Path to the properties file
 
     /**
      * Loads the properties file and returns a Properties object containing all the configuration key-value pairs.
@@ -93,13 +86,8 @@ public class AppConfig {
 
         String[] calculatedRates = new String[rawRates.length + derivedRates.length];
 
-        for (int i = 0; i < derivedRates.length; i++) {
-            calculatedRates[i] = derivedRates[i];
-        }
-
-        for (int i = 0; i < rawRates.length; i++) {
-            calculatedRates[i + derivedRates.length] = rawRates[i];
-        }
+        System.arraycopy(derivedRates, 0, calculatedRates, 0, derivedRates.length);
+        System.arraycopy(rawRates, 0, calculatedRates, derivedRates.length, rawRates.length);
 
         return calculatedRates;
     }

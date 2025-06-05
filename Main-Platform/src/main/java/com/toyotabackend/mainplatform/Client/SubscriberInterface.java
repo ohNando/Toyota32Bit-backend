@@ -43,6 +43,7 @@ public interface SubscriberInterface {
      */
     void unSubscribe(String platformName, String rateName);
     
-    public void setCoordinator(CoordinatorInterface coordinator);
-    public boolean getConnectionStatus();
+    void setCoordinator(CoordinatorInterface coordinator);
+    boolean getConnectionStatus();
+    boolean checkPlatformName(String platformName);
 }

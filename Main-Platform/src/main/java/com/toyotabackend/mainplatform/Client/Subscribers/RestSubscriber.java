@@ -50,7 +50,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * @param baseUrl url of the Rest endpoint
      */
     public RestSubscriber(String _subscriberName,String baseUrl) throws IOException{
-        logger.info("initialializing Subscriber "+ subscriberName);
+        logger.info("initialializing Subscriber {}", subscriberName);
         
         this.subscriberName = _subscriberName;
         this.baseUrl = baseUrl;
@@ -59,7 +59,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
         this.restTemplate = new RestTemplate();
         this.setConnectionStatus(false);
         this.subscribedRates = new ArrayList<>();
-        logger.info("Subscriber initialized" + subscriberName);
+        logger.info("Subscriber initialized {}", subscriberName);
     }
 
     @Override
@@ -70,6 +70,17 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     public boolean getConnectionStatus(){
         return this.connectionStatus; 
     }
+
+    @Override
+    public boolean checkPlatformName(String platformName){
+        if (!platformName.equals("PF2")) {
+            logger.warn("Invalid platform name: {}", platformName);
+            this.connectionStatus = false;
+            return false ;
+        }
+        return true;
+    }
+
     /**
      * Attempts to authenticate the subscriber with the REST API using the provided
      * platform name, username, and password.
@@ -80,11 +91,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      */
     @Override
     public void connect(String platformName, String username, String password) {
-        if (!platformName.equals("PF2")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         logger.info("Connecting to {}",this.loginUrl);
         LoginEntity login = new LoginEntity(username,password);
 
@@ -130,11 +138,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      */
     @Override
     public void disConnect(String platformName, String username, String password){
-        if (!platformName.equals("PF2")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            this.connectionStatus = false;
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         logger.info("Disconnecting from {}", baseUrl);
         this.setConnectionStatus(false);
         coordinator.onDisConnect(platformName,connectionStatus);
@@ -150,10 +155,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      */
     @Override
     public void subscribe(String platformName, String rateName) {
-        if (!platformName.equals("PF2")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
+
         logger.info("{} is subscribing to {}",platformName,rateName);
         subscribedRates.add(platformName + "_" + rateName);
         logger.info("{} subscribed to {}",platformName,rateName);
@@ -168,10 +171,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      */
     @Override
     public void unSubscribe(String platformName, String rateName) {
-        if (!platformName.equals("PF2")) {
-            logger.warn("Invalid platform name: {}", platformName);
-            return;
-        }
+        if(!checkPlatformName(platformName)) return;
 
         logger.info("{} is unsubscribing from {}",platformName,rateName);
         String key = platformName + "_" + rateName;

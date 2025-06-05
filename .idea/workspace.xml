@@ -24,7 +24,7 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/Scripts/RawRateCalculator.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/Scripts/RawRateCalculator.groovy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/filebeat.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main-Platform/logs/toyota-backend.log" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/logs/toyota-backend.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main-Platform/logs/toyota-backend.log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/mvnw.cmd" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/LoginEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/AuthEntity/LoginEntity.java" afterDir="false" />
@@ -61,6 +61,7 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/toyota-backend.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log.2025-05-28.0.gz" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,7 +143,8 @@
       <workItem from="1748970693638" duration="64000" />
       <workItem from="1748970766049" duration="3583000" />
       <workItem from="1748974361309" duration="145000" />
-      <workItem from="1749037358332" duration="6245000" />
+      <workItem from="1749037358332" duration="7127000" />
+      <workItem from="1749144591068" duration="1398000" />
     </task>
     <servers />
   </component>

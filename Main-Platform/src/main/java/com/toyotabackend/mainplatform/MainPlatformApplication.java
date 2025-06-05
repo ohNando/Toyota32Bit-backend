@@ -25,7 +25,6 @@ public class MainPlatformApplication {
      * @throws IOException If there is an issue starting the Spring Boot application or interacting with system resources.
      */
     public static void main(String[] args) throws IOException {
-        // Run the Spring Boot application and initialize the Coordinator
         Coordinator coordinator = new Coordinator((ApplicationContext)
                 SpringApplication.run(MainPlatformApplication.class, args));
     }

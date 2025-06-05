@@ -29,7 +29,8 @@ import java.util.HashMap;
  * </p>
  */
 public class Coordinator extends Thread implements CoordinatorInterface, AutoCloseable {
-    
+    private ApplicationContext applicationContext;
+
     private String[] rawRateNames;
     private String[] calculatedRateNames;
     private String[] subscribedRateNames;
@@ -57,6 +58,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
      */
     public Coordinator(ApplicationContext applicationContext) throws IOException {
         logger.info("Initializing coordinator");
+        this.applicationContext = applicationContext;
 
         // Load configuration from the application properties
         this.subscriberNames = AppConfig.getSubscriberNames();
@@ -78,7 +80,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         this.kafka = new Kafka();
         this.database = applicationContext.getBean("postgreSQL", DatabaseService.class);
         this.rateCache = new HazelcastCache();
-        this.rateService = new RateService(this.rateCache, this.database, this.rawRateNames, this.calculatedRateNames);
+        this.rateService = new RateService(this.rateCache);
         this.calculator = new RateCalculatorService(this.rateService, this.rawRateNames, AppConfig.getDerivedRates());
 
         // Load and initialize TCP and REST subscribers
@@ -210,7 +212,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
                 logger.info("dto : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 rateCache.updateCalculatedRate(dto);
                 kafka.produceRate(dto);
-                database.updateRates(kafka.consumeRate());
             }
         }
     }
@@ -272,7 +273,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
         rateCache.updateRawRate(dto);
         kafka.produceRate(dto);
-        database.updateRates(kafka.consumeRate());
     }
 
     /**
@@ -290,7 +290,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         this.rateStatusMap.put(rateName, RateStatus.UPDATED);
         rateCache.updateRawRate(dto);
         kafka.produceRate(dto);
-        database.updateRates(kafka.consumeRate());
     }
 
     /**

@@ -71,22 +71,4 @@ public class DatabaseService {
             logger.info("No valid rate to save/update.");
         }
     }
-
-    /**
-     * Fetches the latest rate from the database.
-     * This method retrieves the most recent rate from the database, sorted by the update timestamp.
-     * 
-     * @param rateName The name of the rate to be fetched.
-     * @return The latest rate as a RateDto, or null if no rate is found.
-     */
-    public RateDto getLastestRate(String rateName) {
-        logger.info("Last rate is fetching : {}", rateName);
-        Optional<Rate> rateToFetch = repository.findTopByOrderByDbUpdateTimeDesc();
-        if (rateToFetch.isEmpty()) {
-            logger.warn("Rate is not found : {}", rateName);
-            return null;
-        }
-        logger.info("Rate {} fetched from database", rateName);
-        return RateMapper.mapToRateDto(rateToFetch.get());
-    }
 }

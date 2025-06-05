@@ -63,8 +63,7 @@ public class RateMapper {
         dto.setRateName(parts[0]);
         dto.setBid(Float.parseFloat(parts[1]));
         dto.setAsk(Float.parseFloat(parts[2]));
-        Instant timestamp = Instant.parse(parts[3]);
-        dto.setRateUpdateTime(timestamp);
+        dto.setRateUpdateTime(Instant.parse(parts[3]));
         return dto;
     }
 
@@ -80,7 +79,6 @@ public class RateMapper {
         String bid = Float.toString(dto.getBid());
         String ask = Float.toString(dto.getAsk());
         String timestamp = dto.getRateUpdateTime().toString();
-        String key = rateName + "|" + bid + "|" + ask + "|" + timestamp;
-        return key;
+        return rateName + "|" + bid + "|" + ask + "|" + timestamp;
     }
 }
