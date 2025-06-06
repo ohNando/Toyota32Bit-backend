@@ -3,50 +3,14 @@ package com.toyotabackend.mainplatform.Mapper;
 import java.time.Instant;
 
 import com.toyotabackend.mainplatform.Dto.RateDto;
-import com.toyotabackend.mainplatform.Entity.Rate;
 
 /**
- * Utility class for mapping between {@link Rate} entity and {@link RateDto} data transfer object.
  * <p>
- * This class provides methods to convert a {@link Rate} entity to a {@link RateDto}
+ * This class provides methods to convert a {@link RateDto} entity to a {@link String}
  * and vice versa, allowing easy transformation of data between different layers of the application.
- * It also provides methods to map rate data to/from strings for easier communication.
  * </p>
  */
 public class RateMapper {
-
-    /**
-     * Converts a {@link Rate} entity to a {@link RateDto} data transfer object.
-     *
-     * @param rate the {@link Rate} entity to be converted
-     * @return a {@link RateDto} containing the same data as the {@link Rate} entity
-     */
-    public static RateDto mapToRateDto(Rate rate) {
-        RateDto dto = new RateDto();
-        dto.setRateName(rate.rateName);
-        dto.setAsk(rate.ask);
-        dto.setBid(rate.bid);
-        dto.setRateUpdateTime(rate.rateUpdateTime);
-
-        return dto;
-    }
-
-    /**
-     * Converts a {@link RateDto} data transfer object to a {@link Rate} entity.
-     *
-     * @param dto the {@link RateDto} to be converted
-     * @return a {@link Rate} entity containing the same data as the {@link RateDto}
-     */
-    public static Rate mapToRate(RateDto dto) {
-        Rate rate = new Rate();
-        rate.rateName = dto.getRateName();
-        rate.bid = dto.getBid();
-        rate.ask = dto.getAsk();
-        rate.rateUpdateTime = dto.getRateUpdateTime();
-
-        return rate;
-    }
-
     /**
      * Converts a string representation of a rate into a {@link RateDto} object.
      * The string should follow a specific format: "rateName|bid:label:number|ask:label:number|timestamp".

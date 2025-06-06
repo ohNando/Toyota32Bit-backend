@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:latest
@@ -10,6 +12,8 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - app-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -20,6 +24,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2182:2182"
+    networks:
+      - app-network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -35,6 +41,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - app-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -46,7 +54,58 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - app-network
+
+# ------------
+# Rate Servers
+# ------------
+  rest-api-platform:
+    build:
+      context: ./Rest-Api-Platform
+      dockerfile: Dockerfile
+    container_name: Rest-API-Server
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    networks:
+      - app-network
+
+  tcp-platform:
+    build:
+      context: ./TCP-Platform
+      dockerfile: Dockerfile
+    container_name: TCP-Server
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    networks:
+      - app-network
+
+# --------
+# Main APP
+# --------
+  main-platform:
+    build:
+      context: ./Main-Platform
+      dockerfile: Dockerfile
+    container_name: Main-Platform
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - tcp-platform
+      - rest-api-platform
+    ports:
+      - 8085:8085
+
+
+
+
+
+volumes:
+  postgres_data:
+    driver: local
 
 networks:
-  logging-network:
+  app-network:
     driver: bridge

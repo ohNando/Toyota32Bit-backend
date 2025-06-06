@@ -7,7 +7,6 @@ import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Dto.RateStatus;
 import com.toyotabackend.mainplatform.Kafka.Kafka;
 import com.toyotabackend.mainplatform.RateCalculator.RateCalculatorService;
-import com.toyotabackend.mainplatform.RateService.DatabaseService;
 import com.toyotabackend.mainplatform.RateService.RateService;
 import com.toyotabackend.mainplatform.Cache.HazelcastCache;
 
@@ -41,7 +40,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
 
     private final HazelcastCache rateCache;
     private final Kafka kafka;
-    private final DatabaseService database;
     private static final Logger logger = LoggerFactory.getLogger("CoordinatorLogger");
 
     private final RateCalculatorService calculator;
@@ -78,7 +76,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
 
         this.subscriberMap = new HashMap<>();
         this.kafka = new Kafka();
-        this.database = applicationContext.getBean("postgreSQL", DatabaseService.class);
         this.rateCache = new HazelcastCache();
         this.rateService = new RateService(this.rateCache);
         this.calculator = new RateCalculatorService(this.rateService, this.rawRateNames, AppConfig.getDerivedRates());
@@ -209,7 +206,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
                 if (dto == null) {
                     continue;
                 }
-                logger.info("dto : {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
                 rateCache.updateCalculatedRate(dto);
                 kafka.produceRate(dto);
             }
@@ -268,7 +264,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     @Override
     public void onRateAvailable(String platformName, String rateName, RateDto dto) {
         logger.info("Rate available for platform {} -- rateName {}", platformName, rateName);
-        logger.info("dto : {} {}",dto.getAsk(),dto.getBid());
         dto.setStatus(RateStatus.AVAILABLE);
         this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
         rateCache.updateRawRate(dto);
@@ -285,7 +280,6 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     @Override
     public void onRateUpdate(String platformName, String rateName, RateDto dto) {
         logger.info("Rate updated for platform {} -- rateName {}", platformName, rateName);
-        logger.info("dto : {} {}",dto.getAsk(),dto.getBid());
         dto.setStatus(RateStatus.UPDATED);
         this.rateStatusMap.put(rateName, RateStatus.UPDATED);
         rateCache.updateRawRate(dto);
