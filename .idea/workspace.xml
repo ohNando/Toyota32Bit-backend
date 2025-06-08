@@ -5,19 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72036de7-b7f6-41eb-8226-0d6c6f328a83" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Kafka/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Kafka/src/main/resources/application-docker.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/RateDeserializer.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/Dockerfile" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/Scripts/DerivedRateCalculator.groovy" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/Scripts/RawRateCalculator.groovy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application-docker.properties" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/Dockerfile" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/META-INF/MANIFEST.MF" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Auth/LoginHandler.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Config/RateConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Config/ServerConfig.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Handler/ClientConnection.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Parser/CommandController.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/Producer/RateProducer.java" afterDir="false" />
@@ -26,10 +22,14 @@
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/ServerMain.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/User/User.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/filebeat.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/EventConsumer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/resources/application-docker.properties" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
@@ -64,6 +64,7 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/misc.xml" beforeDir="false" />
@@ -76,7 +77,7 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/toyota-backend.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,8 +95,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/logs/Kafka-consumer/kafka-consumer.log" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/logs/main-platform/main-platform.log" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/filebeat.yml" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -125,21 +125,35 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.reader.mode&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/Main-Platform/src/main/resources" />
       <recent name="$PROJECT_DIR$/Kafka/src/main/resources" />
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.MainPlatformApplication">
     <configuration name="MainPlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="Main-Platform" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.toyotabackend.mainplatform.MainPlatformApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainPlatformApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Main-Platform" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.toyotabackend.mainplatform.MainPlatformApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ToyotaBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="Toyota-Backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.toyota.toyotabackend.ToyotaBackendApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -182,7 +196,13 @@
       <workItem from="1749327699310" duration="28000" />
       <workItem from="1749329077873" duration="9000" />
       <workItem from="1749329254205" duration="2507000" />
-      <workItem from="1749332528691" duration="9261000" />
+      <workItem from="1749332528691" duration="9356000" />
+      <workItem from="1749377386781" duration="5619000" />
+      <workItem from="1749387578298" duration="803000" />
+      <workItem from="1749389179603" duration="5579000" />
+      <workItem from="1749402850826" duration="9174000" />
+      <workItem from="1749413696594" duration="174000" />
+      <workItem from="1749416277900" duration="348000" />
     </task>
     <servers />
   </component>

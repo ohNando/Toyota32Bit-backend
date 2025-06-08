@@ -3,7 +3,6 @@ package Server;
 import Handler.ClientConnection;
 import Rate.Rate;
 import Config.RateConfig;
-import Config.ServerConfig;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -31,7 +30,7 @@ public class Server extends Thread {
                throw new RuntimeException(e);
            }
         });
-        this.serverSocket = new ServerSocket(ServerConfig.getServerPort());
+        this.serverSocket = new ServerSocket(8081);
         this.clientList = new ArrayList<>();
         this.rateList = new ArrayList<>();
 

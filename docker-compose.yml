@@ -7,16 +7,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - toyota-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -27,8 +20,6 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
-    networks:
-      - toyota-network
 
   kafka_broker:
     image: confluentinc/cp-kafka:latest
@@ -38,18 +29,12 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka_broker:29092
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-    networks:
-      - toyota-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -59,55 +44,76 @@ services:
     ports:
       - "8082:8080"
     environment:
-      KAFKA_CLUSTERS_0_NAME: local-dev-kafka
+      KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_broker:9092
-    networks:
-      - toyota-network
+
 # ------------
 # Opensearch and dashboard
 # ------------
   opensearch:
     image: opensearchproject/opensearch:latest
-    container_name: opensearch-container
-    restart: unless-stopped
+    container_name: opensearch
     environment:
-      cluster.name: opensearch-cluster
-      node.name: opensearch-node1
       discovery.type: single-node
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
       bootstrap.memory_lock: true
-      plugins.security.disabled: true
-      DISABLE_INSTALL_DEMO_CONFIG: true
-    ulimits:
-      memlock: { soft: -1, hard: -1 }
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: Aloha.32bit
     ports:
       - "9200:9200" #For rest api
       - "9600:9600"
     networks:
       - toyota-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sS --fail http://localhost:9200/_cluster/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest
-    container_name: opensearch-dashboard-container
-    restart: unless-stopped
+    container_name: opensearch-dashboard
     environment:
-      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
       SERVER_HOST: "0.0.0.0"
-      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+      OPENSEARCH_USERNAME: admin
+      OPENSEARCH_PASSWORD: Aloha.32bit
+      OPENSEARCH_SSL_VERIFICATIONMODE: none
     ports:
       - "5601:5601"
     networks:
       - toyota-network
     depends_on:
-      opensearch:
-        condition: service_healthy
+      - opensearch
+
+# ---------------
+# For saving logs
+# ---------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+    container_name: elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: false
+    ports:
+      - "9201:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.12.1
+    container_name: kibana
+    ports:
+      - "5602:5601"
+    depends_on:
+      - elasticsearch
+
+# -----------------------------
+# Sendind logs to elasticsearch
+# -----------------------------
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.1
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/var/log/myLogs:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - elasticsearch
 
 # ------------
 # Rate Servers
@@ -115,24 +121,16 @@ services:
   rest-api-platform:
     build:
       context: ./Rest-Api-Platform
-      dockerfile: Dockerfile
-    container_name: Rest-API-Server-Container
-    restart: unless-stopped
+    container_name: rest-api-platform
     ports:
       - "8080:8080"
-    networks:
-      - toyota-network
 
   tcp-platform:
     build:
       context: ./TCP-Platform
-      dockerfile: Dockerfile
-    container_name: TCP-Server-Container
-    restart: unless-stopped
+    container_name: tcp-server-platform
     ports:
       - "8081:8081"
-    networks:
-      - toyota-network
 
 # --------
 # Main APP
@@ -140,45 +138,23 @@ services:
   main-platform:
     build:
       context: ./Main-Platform
-      dockerfile: Dockerfile
-    container_name: Main-Platform
-    restart: unless-stopped
+    container_name: main-platform
     depends_on:
-      - kafka_broker
-      - tcp-platform
-      - rest-api-platform
+      - kafka_consumer_app
     ports:
-      - "8085:8085"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    volumes:
-      - ./logs/main-platform:/app/logs
-    networks:
-      - toyota-network
+      - "8083:8080"
+
 # ------------------
-# Kafka Consumer App
+# Kafka consumer app
 # ------------------
-  kafka-consumer:
+  kafka_consumer_app:
     build:
       context: ./Kafka
-      dockerfile: Dockerfile
-    container_name: Kafka-Consumer-App
-    restart: unless-stopped
+    container_name: kafka-consumer-app
     depends_on:
-      db:
-        condition: service_healthy
-      kafka_broker:
-        condition: service_started
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    volumes:
-      - ./logs/Kafka-consumer:/app/logs
-    networks:
-      - toyota-network
-
-volumes:
-  postgres_data:
-  opensearch_data:
+      - db
+      - kafka_broker
+      - opensearch
 
 networks:
   toyota-network:

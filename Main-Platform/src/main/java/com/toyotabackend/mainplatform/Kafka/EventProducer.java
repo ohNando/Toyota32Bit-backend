@@ -6,8 +6,8 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.toyotabackend.mainplatform.Dto.RateDto;
 import com.toyotabackend.mainplatform.Mapper.RateMapper;
@@ -28,7 +28,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
  * </p>
  */
 public class EventProducer {
-    private final Logger logger = LoggerFactory.getLogger("KafkaLogger");
+    private final Logger logger = LogManager.getLogger("KafkaLogger");
     private String topic;  // The Kafka topic name to send messages to
     private final Producer<String, String> producer;
 
@@ -40,7 +40,7 @@ public class EventProducer {
     public EventProducer() {
         final Properties properties = new Properties() {
             {
-                put(BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+                put(BOOTSTRAP_SERVERS_CONFIG, "kafka_broker:9092");
                 put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
                 put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
                 put(AUTO_OFFSET_RESET_CONFIG, "earliest"); // Start reading messages from the beginning

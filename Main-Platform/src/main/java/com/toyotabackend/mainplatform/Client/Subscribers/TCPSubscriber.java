@@ -9,8 +9,8 @@ import com.toyotabackend.mainplatform.Mapper.RateMapper;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     private BufferedReader input;
     private boolean connectionStatus;
 
-    private final Logger logger = LoggerFactory.getLogger("SubscriberLogger-TCP");
+    private final Logger logger = LogManager.getLogger("SubscriberLogger");
 
     /**
      * Constructs a TCPSubscriber with server address and port details.

@@ -1,10 +1,10 @@
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jdk-alpine
 LABEL authors="ohnando"
 
 WORKDIR /app
 #Copying JAR file to Docker image
-COPY TCPServer.jar tcp-platform.jar
+COPY TCPServer.jar app.jar
 #Specify the server port
-EXPOSE 8081
+EXPOSE 8080
 #Command that starting the TCPApp
-ENTRYPOINT ["java", "-jar", "tcp-platform.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

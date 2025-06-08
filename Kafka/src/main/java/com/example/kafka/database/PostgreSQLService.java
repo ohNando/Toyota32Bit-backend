@@ -3,8 +3,6 @@ package com.example.kafka.database;
 import com.example.kafka.entity.Rate;
 import com.example.kafka.repository.RateRepository;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +20,6 @@ public class PostgreSQLService {
      */
         @Autowired
         private RateRepository repository;
-        private final Logger logger = LoggerFactory.getLogger("DatabaseLogger");
 
         /**
          * Default constructor for DatabaseService.
@@ -38,35 +35,35 @@ public class PostgreSQLService {
         @Transactional // For this entire method run as a single database operation
         public void updateRates(List<Rate> rateList) {
             if(rateList == null || rateList.isEmpty()) {
-                logger.info("Rate list is empty or null. No action will be performed.");
+                System.out.println("Rate list is empty or null. No action will be performed.");
                 return;
             }
-            logger.info("Rate saving is beginning...");
+            System.out.println("Rate saving is beginning...");
             List<Rate> rateToSave = new ArrayList<>();
             for (Rate rate : rateList) {
                 if(rate == null || rate.getRateName() == null) {
-                    logger.warn("Skipping null rate!");
+                    System.err.println("Skipping null rate!");
                     continue;
                 }
                 Optional<Rate> existRate = repository.findByRateName(rate.getRateName());
                 Rate rateToPersist;
                 if(existRate.isPresent()) {
                     rateToPersist = existRate.get();
-                    logger.info("Exist rate is found {}. Updating rate...", rate.getRateName());
+                    System.out.println("Exist rate is found " + rate.getRateName() + ". Updating rate...");
                     rateToPersist.setBid(rate.getBid());
                     rateToPersist.setAsk(rate.getAsk());
                     rateToPersist.setRateUpdateTime(rate.getRateUpdateTime());
                 }else{
-                    logger.info("No existing rate for {}. Creating new rate...", rate.getRateName());
+                    System.err.println("No existing rate for "+ rate.getRateName() +". Creating new rate...");
                     rateToPersist = rate;
                 }
                 rateToSave.add(rateToPersist);
             }
             if(!rateToSave.isEmpty()) {
                 repository.saveAll(rateToSave);
-                logger.info("{} rates saved/updated in database.",rateToSave.size());
+                System.out.println(rateToSave.size() + " rates saved/updated in database.");
             }else{
-                logger.info("No valid rate to save/update.");
+                System.err.println("No valid rate to save/update.");
             }
         }
 }

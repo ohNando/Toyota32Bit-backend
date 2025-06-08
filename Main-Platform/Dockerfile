@@ -1,21 +1,18 @@
-FROM eclipse-temurin:21-jdk-jammy AS builder
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 LABEL authors="ohnando"
 
 WORKDIR /app
 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline -B
-COPY src ./src
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-RUN ./mvnw package -DskipTests
+COPY src ./src
+RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 
-COPY --from=builder /app/target/Main-Platform-0.0.1-SNAPSHOT.jar main-platform-app.jar
-
-EXPOSE 8085
-
-ENTRYPOINT ["java", "-jar", "main-platform-app.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -11,8 +11,8 @@ import com.toyotabackend.mainplatform.Dto.RateStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -40,7 +40,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     private String loginUrl;
     private boolean connectionStatus;
 
-    private final Logger logger = LoggerFactory.getLogger("SubscriberLogger-REST");
+    private final Logger logger = LogManager.getLogger("SubscriberLogger");
 
     /**
      * Constructs a new RestSubscriber with a reference to the Coordinator
