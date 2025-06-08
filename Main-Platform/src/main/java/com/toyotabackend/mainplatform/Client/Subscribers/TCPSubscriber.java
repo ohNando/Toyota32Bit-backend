@@ -87,7 +87,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
 
     @Override
     public boolean checkPlatformName(String platformName){
-        if (!platformName.equals("PF2")) {
+        if (!platformName.equals("PF1")) {
             logger.warn("Invalid platform name: {}", platformName);
             this.connectionStatus = false;
             return false ;

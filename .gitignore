@@ -4,5 +4,7 @@
 ### For big logs ###
 logs
 
+data
+
 ### Database ###
 Main-Platform/Data/

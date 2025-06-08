@@ -3,6 +3,9 @@ package com.toyotabackend.mainplatform.RateCalculator;
 import groovy.lang.GroovyClassLoader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -25,8 +28,8 @@ public class RateCalculatorService {
     private String[] derivedRateNames;
     private final Logger logger = LoggerFactory.getLogger("CalculatorLogger");
 
-    private final String rawRateCalculatorScriptPath = System.getProperty("user.dir") + "/Main-Platform/Scripts/RawRateCalculator.groovy";
-    private final String derivedRateCalculaterScriptPath = System.getProperty("user.dir") + "/Main-Platform/Scripts/DerivedRateCalculator.groovy";
+    private final String rawRateCalculatorScriptPath = System.getProperty("user.dir") + "/Scripts/RawRateCalculator.groovy";
+    private final String derivedRateCalculaterScriptPath = System.getProperty("user.dir") + "/Scripts/DerivedRateCalculator.groovy";
 
 
     /**
@@ -40,6 +43,7 @@ public class RateCalculatorService {
         this.service = _service;
         this.rawRateNames = rawRates;
         this.derivedRateNames = derivedRates;
+        this.groovyClassLoader = new GroovyClassLoader(getClass().getClassLoader());
     }
 
     /**
@@ -50,10 +54,13 @@ public class RateCalculatorService {
      * @return An array of calculated raw rates.
      */
     public float[] calculateRawRatesWithMethod(float[] bids, float[] asks) {
-        groovyClassLoader = new GroovyClassLoader();
         try {
-            File groovyFile = new File(rawRateCalculatorScriptPath);
-            Class<?> groovyClass = groovyClassLoader.parseClass(groovyFile);
+            InputStream scriptStream = getClass().getResourceAsStream("/Scripts/RawRateCalculator.groovy");
+            if(scriptStream == null) {
+                logger.error("RawRateCalculator.groovy not found");
+                throw new FileNotFoundException("RawRateCalculator.groovy not found");
+            }
+            Class<?> groovyClass = groovyClassLoader.parseClass(new InputStreamReader(scriptStream),"RawRateCalculator.groovy");
             Object groovyObject = groovyClass.newInstance();
             Method method = groovyClass.getMethod("calculateAverageRate", float[].class, float[].class);
             return (float[]) method.invoke(groovyObject, bids, asks);
@@ -74,10 +81,13 @@ public class RateCalculatorService {
      */
     public float[] calculateDerivedRatesWithMethod(float[] bidRates1, float[] askRates1,
                                                     float[] bidRates2, float[] askRates2) {
-        groovyClassLoader = new GroovyClassLoader();
         try {
-            File groovyFile = new File(derivedRateCalculaterScriptPath);
-            Class<?> groovyClass = groovyClassLoader.parseClass(groovyFile);
+            InputStream scriptStream = getClass().getResourceAsStream("/Scripts/DerivedRateCalculator.groovy");
+            if(scriptStream == null) {
+                logger.error("DerivedRateCalculator.groovy not found");
+                throw new FileNotFoundException("DerivedRateCalculator.groovy not found");
+            }
+            Class<?> groovyClass = groovyClassLoader.parseClass(new InputStreamReader(scriptStream),"DerivedRateCalculator.groovy");
             Object groovyObject = groovyClass.newInstance();
             Method method = groovyClass.getMethod("calculateDerivedAverageRate", float[].class, float[].class, float[].class, float[].class);
             return (float[]) method.invoke(groovyObject, bidRates1, askRates1, bidRates2, askRates2);

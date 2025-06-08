@@ -10,8 +10,8 @@ import com.toyotabackend.mainplatform.RateCalculator.RateCalculatorService;
 import com.toyotabackend.mainplatform.RateService.RateService;
 import com.toyotabackend.mainplatform.Cache.HazelcastCache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
 
     private final HazelcastCache rateCache;
     private final Kafka kafka;
-    private static final Logger logger = LoggerFactory.getLogger("CoordinatorLogger");
+    private static final Logger logger = LogManager.getLogger("CoordinatorLogger");
 
     private final RateCalculatorService calculator;
     private final RateService rateService;
