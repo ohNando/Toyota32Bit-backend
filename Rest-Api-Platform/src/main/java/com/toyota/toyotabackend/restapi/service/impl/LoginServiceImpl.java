@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LoginServiceImpl implements LoginService {
-
     private User tempUser;
 
     public LoginServiceImpl(){

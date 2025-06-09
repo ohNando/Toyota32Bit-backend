@@ -19,9 +19,26 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
+/**
+ * Configuration class for setting up the OpenSearch high-level REST client.
+ * <p>
+ * This client is used for connecting to the OpenSearch cluster with basic authentication
+ * and a trust-all SSL context (intended for development or test environments).
+ */
 @Configuration
 public class OpensearchConfig {
-
+    /**
+     * Creates and configures a {@link RestHighLevelClient} bean with basic authentication
+     * and an insecure SSL context (trusts all certificates).
+     * <p>
+     * The OpenSearch endpoint is configured as <code>https://opensearch:9200</code> with
+     * username "admin" and password "Aloha.32bit".
+     * </p>
+     *
+     * @return a configured {@link RestHighLevelClient} instance
+     * @throws NoSuchAlgorithmException if the TLS algorithm is not available
+     * @throws KeyManagementException if initializing the SSL context fails
+     */
     @Bean(destroyMethod = "close")
     public RestHighLevelClient restHighLevelClient() throws NoSuchAlgorithmException, KeyManagementException {
 
@@ -29,6 +46,7 @@ public class OpensearchConfig {
         credentialsProvider.setCredentials(AuthScope.ANY,
                 new UsernamePasswordCredentials("admin", "Aloha.32bit"));
 
+        // Trust manager that accepts all certificates
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
                     public java.security.cert.X509Certificate[] getAcceptedIssuers() {

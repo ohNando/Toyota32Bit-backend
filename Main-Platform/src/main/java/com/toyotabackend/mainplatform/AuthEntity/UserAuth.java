@@ -7,7 +7,6 @@ import lombok.Setter;
 
 /**
  * Represents the result of a user authentication attempt.
- * 
  * Contains status information and an optional message.
  */
 @AllArgsConstructor

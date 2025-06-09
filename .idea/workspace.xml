@@ -23,6 +23,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/entity/Rate.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/entity/Rate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/mapper/RateMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/mapper/RateMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/Scripts/DerivedRateCalculator.groovy" beforeDir="false" />
@@ -66,7 +68,6 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Client/RateDataProducer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +82,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Main-Platform" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/filebeat.yml" root0="FORCE_HIGHLIGHTING" />
@@ -199,6 +200,8 @@
       <workItem from="1749436953201" duration="3304000" />
       <workItem from="1749458173581" duration="63000" />
       <workItem from="1749462580722" duration="6342000" />
+      <workItem from="1749468938574" duration="110000" />
+      <workItem from="1749474881416" duration="1058000" />
     </task>
     <servers />
   </component>

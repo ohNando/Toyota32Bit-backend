@@ -77,30 +77,12 @@ public class HazelcastCache {
     }
 
     /**
-     * Retrieves a calculated rate by its name.
-     *
-     * @param rateName the name of the rate
-     * @return the corresponding RateDto or null if not found
-     */
-    public RateDto getCalculatedRateDto(String rateName) {
-        cacheLogger.info("{} rate requested", rateName);
-        RateDto dto = calculatedCache.get(rateName);
-        if (dto == null) {
-            cacheLogger.warn("No calculated rate found with name {}", rateName);
-            return null;
-        }
-        cacheLogger.info("{} calculated rate retrieved successfully", rateName);
-        return dto;
-    }
-
-    /**
      * Updates or inserts a raw rate in the cache.
      *
      * @param dto the RateDto to update
      */
     public void updateRawRate(RateDto dto) {
         String rawRateName = dto.getRateName();
-        cacheLogger.info("Updating raw rate: {}", rawRateName);
         rawCache.put(rawRateName, dto);
         cacheLogger.info("Raw rate {} updated", rawRateName);
     }
@@ -113,7 +95,6 @@ public class HazelcastCache {
     public void updateCalculatedRate(RateDto dto) {
         if (dto == null) return;
         String calculatedRateName = dto.getRateName();
-        cacheLogger.info("Updating calculated rate: {}", calculatedRateName);
         calculatedCache.put(calculatedRateName, dto);
         cacheLogger.info("Calculated rate {} updated", calculatedRateName);
     }

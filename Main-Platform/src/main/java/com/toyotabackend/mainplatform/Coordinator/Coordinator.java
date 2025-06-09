@@ -269,14 +269,13 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         logger.info("Rate available for platform {} -- rateName {}", platformName, rateName);
         dto.setStatus(RateStatus.AVAILABLE);
 
-        if(!rateService.isWithinTolerance(dto)){
+        if(rateService.isWithinTolerance(dto)){
+            this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
+            rateCache.updateRawRate(dto);
+            kafka.produceRate(dto);
+        }else{
             logger.info("Rate is out of tolerance, skipping: {}", dto.getRateName());
-            return;
         }
-
-        this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
-        rateCache.updateRawRate(dto);
-        kafka.produceRate(dto);
     }
 
     /**
@@ -291,14 +290,13 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         logger.info("Rate updated for platform {} -- rateName {}", platformName, rateName);
         dto.setStatus(RateStatus.UPDATED);
 
-        if(!rateService.isWithinTolerance(dto)){
+        if(rateService.isWithinTolerance(dto)){
+            this.rateStatusMap.put(rateName, RateStatus.UPDATED);
+            rateCache.updateRawRate(dto);
+            kafka.produceRate(dto);
+        }else{
             logger.info("Rate is out of tolerance, skipping: {}", dto.getRateName());
-            return;
         }
-
-        this.rateStatusMap.put(rateName, RateStatus.UPDATED);
-        rateCache.updateRawRate(dto);
-        kafka.produceRate(dto);
     }
 
     /**

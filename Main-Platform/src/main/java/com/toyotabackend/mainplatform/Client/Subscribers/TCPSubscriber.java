@@ -54,9 +54,9 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     /**
      * Constructs a TCPSubscriber with server address and port details.
      *
-     * @param subscriberName name identifier for logging
-     * @param _serverAddress the TCP server address
-     * @param _serverPort    the TCP server port
+     * @param subscriberName name identifier for logging and platform validation
+     * @param _serverAddress the TCP server IP or hostname
+     * @param _serverPort    the TCP server port number
      */
     public TCPSubscriber(String subscriberName,String _serverAddress,int _serverPort){
         logger.info("Initializing {} Subscriber", subscriberName);
@@ -69,9 +69,8 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     }
 
     /**
-     * Sets the coordinator reference to handle rate updates and status.
-     *
-     * @param coordinator the coordinator instance
+     * Sets the coordinator instance to handle rate update callbacks and connection events.
+     * @param coordinator the coordinator interface implementation
      */
     @Override
     public void setCoordinator(CoordinatorInterface coordinator){
@@ -80,7 +79,6 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
 
     /**
      * Returns the current connection status.
-     *
      * @return true if connected, false otherwise
      */
     @Override
@@ -88,6 +86,12 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
         return this.connectionStatus; 
     }
 
+    /**
+     * Checks if the given platform name matches this subscriber's name.
+     *
+     * @param platformName the platform name to verify
+     * @return true if names match, false otherwise
+     */
     @Override
     public boolean checkPlatformName(String platformName){
         if (!platformName.equals(subscriberName)) {
@@ -99,12 +103,14 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     }
 
     /**
-     * Connects to the TCP platform using username and password.
+     * Connects to the TCP server using the specified credentials.
+     * Establishes socket, opens streams, sends login request,
+     * and starts the subscriber thread on success.
      *
-     * @param platformName the platform identifier (must be "PF1")
+     * @param platformName the platform identifier
      * @param username     the login username
      * @param password     the login password
-     * @throws IOException if socket communication fails
+     * @throws IOException if network or socket errors occur
      */
     @Override
     public void connect(String platformName, String username, String password) throws IOException {
@@ -146,8 +152,9 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
         this.start();
     }
 
-     /**
-     * Disconnects from the TCP platform and closes all streams.
+    /**
+     * Disconnects from the TCP server by closing socket and streams,
+     * updates connection status, and notifies the coordinator.
      *
      * @param platformName the platform identifier
      */
@@ -169,10 +176,10 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     }
 
     /**
-     * Subscribes to a rate by sending a subscription request to the server.
+     * Sends a subscription request to the server for the specified rate.
      *
      * @param platformName the platform identifier
-     * @param rateName     the name of the rate to subscribe to
+     * @param rateName     the rate to subscribe to
      */
     @Override
     public void subscribe(String platformName, String rateName) {
@@ -185,10 +192,10 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     }
 
     /**
-     * Unsubscribes from a rate by sending an unsubscribe request to the server.
+     * Sends an unsubscribe request to the server for the specified rate.
      *
      * @param platformName the platform identifier
-     * @param rateName     the name of the rate to unsubscribe from
+     * @param rateName     the rate to unsubscribe from
      */
     @Override
     public void unSubscribe(String platformName, String rateName) {
@@ -201,7 +208,10 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     }
 
     /**
-     * Main loop to listen for incoming rate updates and notify the coordinator.
+     * Main run loop which listens for incoming rate updates from the TCP server.
+     * On receiving data, parses it into RateDto, filters subscribed rates,
+     * and notifies the coordinator of the rate status and updates.
+     * Handles reconnection attempts on connection loss.
      */
     @Override
     public void run() {

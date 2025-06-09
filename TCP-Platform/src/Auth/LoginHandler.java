@@ -2,8 +2,6 @@ package Auth;
 
 import User.User;
 
-import java.io.IOException;
-
 /**
  * Handles user login authentication.
  */
@@ -16,13 +14,10 @@ public class LoginHandler {
      * invalid or the username/password does not match the values in the properties,
      * it returns an error. Otherwise, it returns a success message.</p>
      *
-     * @param input The input stream to read the login attempt.
-     * @param output The output stream to send authentication results.
-     * @param properties The properties containing the valid username and password.
+     * @param szLine The input stream to read the login attempt.
      * @return {@code true} if authentication is successful, {@code false} otherwise.
-     * @throws IOException If an I/O error occurs.
      */
-    public static boolean authenticate(String szLine) throws IOException {
+    public static boolean authenticate(String szLine) {
         User adminUser = new User("admin","12345");
 
         String[] parts = szLine.split("\\|");

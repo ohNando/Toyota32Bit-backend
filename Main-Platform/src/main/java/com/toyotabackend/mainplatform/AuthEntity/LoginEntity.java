@@ -7,7 +7,6 @@ import lombok.Setter;
 
 /**
  * Represents user login credentials with a username and password.
- * 
  * Used for authentication purposes.
  */
 @AllArgsConstructor

@@ -2,7 +2,6 @@ package Handler;
 
 import Auth.LoginHandler;
 import Rate.Rate;
-import User.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +11,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a client connection on the server side.
+ * <p>
+ * Handles authentication, subscription management to rates,
+ * and sends subscribed rate updates periodically to the client.
+ * </p>
+ * <p>
+ * This class extends Thread and manages reading client requests and
+ * responding accordingly.
+ * </p>
+ */
 public class ClientConnection extends Thread {
     private final Socket clientSocket;
     private final List<Rate> rateList;
@@ -20,12 +30,24 @@ public class ClientConnection extends Thread {
     private final BufferedReader in;
     private final PrintWriter out;
     private final Thread rateSender;
-    private final User adminUser;
 
+    /**
+     * Returns the socket associated with this client connection.
+     *
+     * @return the client socket
+     */
     public Socket getClientSocket() { return clientSocket; }
 
+    /**
+     * Constructs a new ClientConnection object.
+     * Initializes the input/output streams, authenticates the client,
+     * and prepares the subscription list and rate sender thread.
+     *
+     * @param clientSocket the socket connected to the client
+     * @param rateList the list of available rates on the server
+     * @throws IOException if an I/O error occurs when creating input/output streams
+     */
     public ClientConnection(Socket clientSocket, List<Rate> rateList) throws IOException {
-        this.adminUser = new User("admin","12345");
         this.rateList = rateList;
         this.subscribeRateList = new ArrayList<>();
         this.clientSocket = clientSocket;
@@ -58,6 +80,13 @@ public class ClientConnection extends Thread {
     this.start();
     }
 
+    /**
+     * Sends the subscribed rates to the client every second.
+     * Iterates over the subscribed rates and writes rate details
+     * to the client's output stream.
+     *
+     * @throws InterruptedException if the sending thread is interrupted during sleep
+     */
     public void sendSubRates() throws InterruptedException {
         do{
             synchronized (subscribeRateList){
@@ -69,6 +98,11 @@ public class ClientConnection extends Thread {
         }while(clientSocket.isConnected());
     }
 
+    /**
+     * Adds the specified rate to the subscription list if available.
+     *
+     * @param rateName the name of the rate to subscribe
+     */
     public void Sub(String rateName){
         for(Rate rate : rateList){
             if(rate.getRateName().equals(rateName)){
@@ -79,6 +113,11 @@ public class ClientConnection extends Thread {
         }
     }
 
+    /**
+     * Removes the specified rate from the subscription list if present.
+     *
+     * @param rateName the name of the rate to unsubscribe
+     */
     public void unSub(String rateName){
         for(Rate rate : rateList){
             if(rate.getRateName().equals(rateName)){
@@ -89,6 +128,13 @@ public class ClientConnection extends Thread {
         }
     }
 
+    /**
+     * Handles incoming client requests to subscribe or unsubscribe to rates.
+     * The request format is expected to be "subscribe|rateName" or "unsubscribe|rateName".
+     * Prints error messages for invalid requests.
+     *
+     * @param request the client request string
+     */
     public void messageHandler(String request){
         String[] parts = request.split("\\|");
         if(parts.length != 2){
@@ -108,6 +154,12 @@ public class ClientConnection extends Thread {
         }
     }
 
+    /**
+     * The main thread execution method.
+     * Starts the rateSender thread to send subscribed rates,
+     * continuously listens for incoming client messages,
+     * processes them and handles client disconnection.
+     */
     @Override
     public void run(){
         rateSender.start();

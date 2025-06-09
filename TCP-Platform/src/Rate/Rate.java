@@ -5,6 +5,13 @@ import Server.Server;
 
 import java.time.Instant;
 
+/**
+ * Represents a currency rate with bid and ask prices.
+ * <p>
+ * Extends Thread to continuously update its bid and ask values
+ * periodically while the server is running.
+ * </p>
+ */
 public class Rate extends Thread {
     private String rateName;
     private float bid;
@@ -13,6 +20,16 @@ public class Rate extends Thread {
 
     private Server server;
 
+    /**
+     * Constructs a Rate object.
+     * Initializes the rate with a name, bid, ask, and sets the initial timestamp.
+     * Also associates it with the server to check server running status.
+     *
+     * @param _Server the server instance controlling the lifecycle
+     * @param _rateName the name of the rate (e.g., currency pair)
+     * @param _bid initial bid price
+     * @param _ask initial ask price
+     */
     public Rate(Server _Server,String _rateName, float _bid, float _ask) {
         this.setRateName(_rateName);
         this.setBid(_bid);
@@ -32,6 +49,14 @@ public class Rate extends Thread {
     public void setAsk(float ask) { this.ask = ask; }
     public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
 
+    /**
+     * Thread execution method.
+     * <p>
+     * Continuously generates new bid and ask rates every second
+     * while the associated server is running.
+     * Updates timestamp after each rate generation.
+     * </p>
+     */
     @Override
     public void run() {
         do{

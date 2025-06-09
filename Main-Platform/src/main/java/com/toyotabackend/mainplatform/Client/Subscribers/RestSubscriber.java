@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * RestSubscriber is a data provider implementation that fetches rate information
  * from a REST API based on a subscription model. It runs in a separate thread and
- * repeatedly polls the API for updates for subscribed rate names.
- * This class is specifically designed to work with platform "PF2".
+ * repeatedly polls the API for updates for subscribed rate names..
  */
 @Getter
 @Setter
@@ -46,8 +45,9 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * Constructs a new RestSubscriber with a reference to the Coordinator
      * to receive rate updates and status notifications.
      *
-     * @param _subscriberName name of the subscriber
-     * @param baseUrl url of the Rest endpoint
+     * @param _subscriberName the name of the subscriber (typically the platform ID)
+     * @param baseUrl the base URL of the REST endpoint
+     * @throws IOException if there is an error reading configuration
      */
     public RestSubscriber(String _subscriberName,String baseUrl) throws IOException{
         logger.info("initialializing Subscriber {}", subscriberName);
@@ -83,11 +83,12 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
 
     /**
      * Attempts to authenticate the subscriber with the REST API using the provided
-     * platform name, username, and password.
+     * platform name, username, and password. If successful, the subscriber starts
+     * polling rate data in a separate thread.
      *
-     * @param platformName the platform identifier (must be "PF2")
-     * @param username     the username for login
-     * @param password     the password for login
+     * @param platformName the platform identifier (must match subscriberName)
+     * @param username the username for authentication
+     * @param password the password for authentication
      */
     @Override
     public void connect(String platformName, String username, String password) {
@@ -129,8 +130,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     }
 
     /**
-     * Disconnects from the platform. Currently, this method logs for the disconnection
-     * and call the onDisconnect method.
+     * Disconnects from the platform and stops polling data.
+     * Notifies the coordinator of disconnection status.
      *
      * @param platformName the platform identifier
      */
@@ -146,10 +147,10 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
 
     /**
      * Subscribes to rate updates for the specified platform and rate name.
-     * Starts a new thread to fetch data continuously.
+     * The rate will be included in the polling cycle.
      *
      * @param platformName the platform identifier
-     * @param rateName     the rate name to subscribe to
+     * @param rateName the name of the rate to subscribe to
      */
     @Override
     public void subscribe(String platformName, String rateName) {
@@ -161,11 +162,11 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     }
 
     /**
-     * Unsubscribes from a specific rate by setting its subscription flag to false
-     * and interrupting the associated thread.
+     * Unsubscribes from rate updates for the specified rate name.
+     * Removes the rate from the polling cycle.
      *
      * @param platformName the platform identifier
-     * @param rateName     the rate name to unsubscribe from
+     * @param rateName the name of the rate to unsubscribe from
      */
     @Override
     public void unSubscribe(String platformName, String rateName) {
@@ -178,8 +179,10 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     }
 
     /**
-     * The main run loop that performs polling of rate data for all active subscriptions.
-     * It sends rate updates and availability status to the coordinator.
+     * Main polling loop that fetches rate data periodically for all
+     * subscribed rate names. The loop continues while the subscriber
+     * remains connected. On each poll, the method attempts to retrieve
+     * rate data and informs the coordinator of the status or updates.
      */
     @Override
     public void run() {

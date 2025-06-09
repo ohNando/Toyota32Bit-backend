@@ -33,6 +33,16 @@ public class RateService {
         return cache.getRawRates(symbol);
     }
 
+    /**
+     * Checks whether the given RateDto's bid and ask values are within
+     * a 1% tolerance compared to the last cached rate.
+     * <p>
+     * If no previous rate exists in cache, it returns true (accept the rate).
+     * </p>
+     *
+     * @param dto The new RateDto to validate.
+     * @return true if bid and ask changes are both within ±1%, false otherwise.
+     */
     public boolean isWithinTolerance(RateDto dto) {
         RateDto lastDto = cache.getRawRateDto(dto.getRateName());
 

@@ -7,9 +7,9 @@ import java.time.Instant;
 import java.util.Random;
 
 /**
- * A Data Transfer Object (DTO) representing a currency rate.
- * This class is used to transfer rate information such as the rate name,
- * bid, ask, and the time the rate was last updated.
+ * Represents a currency rate with bid and ask prices that update over time.
+ * This class extends Thread and simulates dynamic rate changes at regular intervals.
+ * It holds details about the rate name, bid, ask, and the last update timestamp.
  */
 @Getter
 @Setter
@@ -46,6 +46,12 @@ public class Rate extends Thread{
         isActive = false;
     }
 
+    /**
+     * The main thread method that continuously updates the bid and ask prices
+     * by a random percentage between 0.1% and 0.5%, either increasing or decreasing.
+     * Updates occur every second and the last update time is refreshed accordingly.
+     * The loop runs until stopRate() is called.
+     */
     @Override
     public void run(){
         Random random = new Random();
