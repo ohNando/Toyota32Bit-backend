@@ -28,7 +28,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
  * </p>
  */
 public class EventProducer {
-    private final Logger logger = LogManager.getLogger("KafkaLogger");
+    private final Logger logger = LogManager.getLogger(EventProducer.class);
     private String topic;  // The Kafka topic name to send messages to
     private final Producer<String, String> producer;
 

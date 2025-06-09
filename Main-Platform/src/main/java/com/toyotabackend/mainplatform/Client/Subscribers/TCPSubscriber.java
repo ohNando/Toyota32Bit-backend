@@ -46,7 +46,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     private BufferedReader input;
     private boolean connectionStatus;
 
-    private final Logger logger = LogManager.getLogger("SubscriberLogger");
+    private final Logger logger = LogManager.getLogger(TCPSubscriber.class);
 
     /**
      * Constructs a TCPSubscriber with server address and port details.

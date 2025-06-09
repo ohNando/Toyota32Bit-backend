@@ -4,55 +4,60 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
         </Console>
-        <File name="CacheFile" filename="logs/cache.log" append="true">
-            <PatternLayout pattern="[%d] [%-5level] [%t] [%c] %msg%n"/>
-        </File>
-        <File name="CoordinatorFile" filename="logs/coordinator.log" append="true">
+        <File name="CacheFile" filename="/logs/cache.log" append="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </File>
-        <File name="CalculatorFile" filename="logs/calculator.log" append="true">
+        <File name="CoordinatorFile" filename="/logs/coordinator.log" append="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </File>
-        <File name="SubscriberFile" filename="logs/subscriber.log" append="true">
+        <File name="CalculatorFile" filename="/logs/calculator.log" append="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </File>
-        <File name="KafkaFile" filename="logs/kafka.log" append="true">
+        <File name="SubscriberFile" filename="/logs/subscriber.log" append="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </File>
-        <File name="Filebeat" filename="logs/filebeat.log" append="true">
+        <File name="KafkaFile" filename="/logs/kafka.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </File>
+        <File name="Filebeat" filename="/logs/filebeat.log" append="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
         </File>
     </Appenders>
 
     <Loggers>
-        <Logger name="CacheLogger" level="all" additivity="false">
+        <Logger name="com.toyotabackend.mainplatform.Cache.HazelcastCache" level="all" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="CacheFile"/>
         </Logger>
 
-        <Logger name="CoordinatorLogger" level="all" additivity="false">
+        <Logger name="com.toyotabackend.mainplatform.Coordinator.Coordinator" level="all" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="CoordinatorFile"/>
         </Logger>
 
-        <Logger name="CalculatorLogger" level="all" additivity="false">
+        <Logger name="com.toyotabackend.mainplatform.RateCalculator.RateCalculatorService" level="all" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="CalculatorFile"/>
         </Logger>
 
-        <Logger name="SubscriberLogger" level="all" additivity="false">
+        <Logger name="com.toyotabackend.mainplatform.Client.Subscribers.RestSubscriber" level="all" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="SubscriberFile"/>
         </Logger>
 
-        <Logger name="KafkaLogger" level="all" additivity="false">
+        <Logger name="com.toyotabackend.mainplatform.Client.Subscribers.TCPSubscriber" level="all" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="SubscriberFile"/>
+        </Logger>
+
+        <Logger name="com.toyotabackend.mainplatform.Kafka.EventProducer" level="all" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="KafkaFile"/>
         </Logger>
 
         <Root level="info" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="filebeat"/>
+            <AppenderRef ref="Filebeat"/>
         </Root>
     </Loggers>
 </Configuration>

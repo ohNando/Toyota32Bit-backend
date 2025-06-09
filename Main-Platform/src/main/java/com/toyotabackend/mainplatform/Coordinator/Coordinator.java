@@ -40,7 +40,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
 
     private final HazelcastCache rateCache;
     private final Kafka kafka;
-    private static final Logger logger = LogManager.getLogger("CoordinatorLogger");
+    private static final Logger logger = LogManager.getLogger(Coordinator.class);
 
     private final RateCalculatorService calculator;
     private final RateService rateService;

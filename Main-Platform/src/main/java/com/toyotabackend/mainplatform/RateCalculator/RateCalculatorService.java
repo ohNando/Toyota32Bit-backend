@@ -25,7 +25,7 @@ public class RateCalculatorService {
     private RateService service;
     private String[] rawRateNames;
     private String[] derivedRateNames;
-    private final Logger logger = LogManager.getLogger("CalculatorLogger");
+    private final Logger logger = LogManager.getLogger(RateCalculatorService.class);
 
     private final String rawRateCalculatorScriptPath = System.getProperty("user.dir") + "/Scripts/RawRateCalculator.groovy";
     private final String derivedRateCalculaterScriptPath = System.getProperty("user.dir") + "/Scripts/DerivedRateCalculator.groovy";

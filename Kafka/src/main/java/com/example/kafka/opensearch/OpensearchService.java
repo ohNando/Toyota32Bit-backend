@@ -22,18 +22,18 @@ public class OpensearchService {
         this.client = _client;
     }
 
-    public void updateRate(List<Rate> rateList){
-        if(rateList == null || rateList.isEmpty()){
+    public void updateRate(Rate rate) throws IOException {
+        if(rate == null || rate.getRateName() == null){
             System.err.println("Rate list is empty. No action taken.");
+            return;
         }
         System.out.println("Rates are being updated in Opensearch");
 
-        for(Rate rate : rateList){
-            try{
-                this.indexRate(rate);
-            }catch(Exception e){
-                System.err.println("Error while indexing rate "+rate.getRateName()+" to OpenSearch: " + e.getMessage());
-            }
+        try{
+            this.indexRate(rate);
+        }catch(Exception e){
+            System.err.println("Error while indexing rate "+rate.getRateName()+" to OpenSearch: " + e.getMessage());
+            throw e;
         }
     }
 

@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
 @Configuration
 public class OpensearchConfig {
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public RestHighLevelClient restHighLevelClient() throws NoSuchAlgorithmException, KeyManagementException {
 
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();

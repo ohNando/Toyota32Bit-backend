@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="72036de7-b7f6-41eb-8226-0d6c6f328a83" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/RateDeserializer.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/Dockerfile" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/Scripts/DerivedRateCalculator.groovy" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/Scripts/RawRateCalculator.groovy" afterDir="false" />
@@ -22,15 +20,13 @@
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/ServerMain.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/User/User.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/filebeat.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/EventConsumer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/RateDeserializer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/resources/application-docker.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/Scripts/DerivedRateCalculator.groovy" beforeDir="false" />
@@ -63,8 +59,6 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Repository/RateRepository.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Rest-Api-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/misc.xml" beforeDir="false" />
@@ -77,7 +71,7 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/toyota-backend.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/filebeat.yml" beforeDir="false" afterPath="$PROJECT_DIR$/filebeat.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +86,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Main-Platform" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/filebeat.yml" root0="FORCE_HIGHLIGHTING" />
@@ -202,7 +196,12 @@
       <workItem from="1749389179603" duration="5579000" />
       <workItem from="1749402850826" duration="9174000" />
       <workItem from="1749413696594" duration="174000" />
-      <workItem from="1749416277900" duration="348000" />
+      <workItem from="1749416277900" duration="2095000" />
+      <workItem from="1749419236256" duration="3656000" />
+      <workItem from="1749423749458" duration="558000" />
+      <workItem from="1749424314476" duration="3359000" />
+      <workItem from="1749432088183" duration="2283000" />
+      <workItem from="1749436953201" duration="2674000" />
     </task>
     <servers />
   </component>

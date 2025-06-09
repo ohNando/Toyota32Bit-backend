@@ -10,6 +10,8 @@ services:
       - ./data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - toyota-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -20,6 +22,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    networks:
+      - toyota-network
 
   kafka_broker:
     image: confluentinc/cp-kafka:latest
@@ -35,6 +39,8 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - toyota-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -46,6 +52,8 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka_broker:9092
+    networks:
+      - toyota-network
 
 # ------------
 # Opensearch and dashboard
@@ -91,6 +99,8 @@ services:
       xpack.security.enabled: false
     ports:
       - "9201:9200"
+    networks:
+      - toyota-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.12.1
@@ -99,6 +109,8 @@ services:
       - "5602:5601"
     depends_on:
       - elasticsearch
+    networks:
+      - toyota-network
 
 # -----------------------------
 # Sendind logs to elasticsearch
@@ -109,11 +121,13 @@ services:
     user: root
     volumes:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./logs:/var/log/myLogs:ro
+      - ./Main-Platform/logs:/logs:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - elasticsearch
+    networks:
+      - toyota-network
 
 # ------------
 # Rate Servers
@@ -124,6 +138,8 @@ services:
     container_name: rest-api-platform
     ports:
       - "8080:8080"
+    networks:
+      - toyota-network
 
   tcp-platform:
     build:
@@ -131,6 +147,8 @@ services:
     container_name: tcp-server-platform
     ports:
       - "8081:8081"
+    networks:
+      - toyota-network
 
 # --------
 # Main APP
@@ -140,9 +158,13 @@ services:
       context: ./Main-Platform
     container_name: main-platform
     depends_on:
-      - kafka_consumer_app
+      - kafka_broker
+    volumes:
+      - ./Main-Platform/logs:/logs
     ports:
       - "8083:8080"
+    networks:
+      - toyota-network
 
 # ------------------
 # Kafka consumer app
@@ -155,6 +177,10 @@ services:
       - db
       - kafka_broker
       - opensearch
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka_broker:9092
+    networks:
+      - toyota-network
 
 networks:
   toyota-network:

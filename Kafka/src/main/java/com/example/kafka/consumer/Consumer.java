@@ -10,8 +10,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class Consumer {
     @Autowired
@@ -21,20 +19,18 @@ public class Consumer {
 
     @KafkaListener(topics = "rates", groupId = "my-group")
     public void consumeRateEvents(@Payload String message) {
-        if(message == null || message.isEmpty()) return;
-        Rate rateToSave = null;
-        try{
-            rateToSave = RateMapper.stringToRate(message);
-        }catch (Exception e){
-            throw new RuntimeException("Failed to parse rate message: " + message,e);
+        if (message == null || message.isEmpty()) return;
+        Rate rateToSave = RateMapper.stringToRate(message);
+
+        if (rateToSave == null || rateToSave.getRateName() == null) {
+            throw new RuntimeException("Failed to parse rate message: " + message);
         }
 
-        if(rateToSave.getRateName() == null) return;
         try {
             postgreSQLService.updateRates(rateToSave);
             OSService.updateRate(rateToSave);
-        }catch (Exception e){
-            throw new RuntimeException("Failed to update rate " + rateToSave.getRateName(),e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update rate " + rateToSave.getRateName(), e);
         }
     }
 }

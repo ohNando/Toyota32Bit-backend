@@ -40,7 +40,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     private String loginUrl;
     private boolean connectionStatus;
 
-    private final Logger logger = LogManager.getLogger("SubscriberLogger");
+    private final Logger logger = LogManager.getLogger(RestSubscriber.class);
 
     /**
      * Constructs a new RestSubscriber with a reference to the Coordinator

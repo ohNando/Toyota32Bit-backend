@@ -20,7 +20,7 @@ import java.util.List;
 public class HazelcastCache {
 
     private final HazelcastInstance hazelcastInstance;
-    private final Logger cacheLogger = LogManager.getLogger("CacheLogger");
+    private final Logger cacheLogger = LogManager.getLogger(HazelcastCache.class);
     private final IMap<String, RateDto> rawCache;
     private final IMap<String, RateDto> calculatedCache;
 
