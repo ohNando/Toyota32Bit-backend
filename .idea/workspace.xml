@@ -21,10 +21,6 @@
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/User/User.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/entity/Rate.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/entity/Rate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/mapper/RateMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/mapper/RateMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/Scripts/DerivedRateCalculator.groovy" beforeDir="false" />
@@ -57,6 +53,7 @@
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/java/com/toyotabackend/mainplatform/Repository/RateRepository.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/TCP-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/.idea/misc.xml" beforeDir="false" />
@@ -202,6 +199,7 @@
       <workItem from="1749462580722" duration="6342000" />
       <workItem from="1749468938574" duration="110000" />
       <workItem from="1749474881416" duration="1058000" />
+      <workItem from="1749477634729" duration="3748000" />
     </task>
     <servers />
   </component>
