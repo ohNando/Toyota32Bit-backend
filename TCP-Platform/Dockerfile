@@ -2,9 +2,20 @@ FROM eclipse-temurin:21-jdk-alpine
 LABEL authors="ohnando"
 
 WORKDIR /app
-#Copying JAR file to Docker image
-COPY TCPServer.jar app.jar
-#Specify the server port
+
+# copying source file to container
+COPY src ./src
+COPY META-INF ./META-INF
+
+# compiling and creating .jar file
+RUN javac -d out $(find src -name "*.java")
+
+RUN cp src/config.properties out/
+
+RUN jar cfm TCPServer.jar META-INF/MANIFEST.MF -C out .
+
+# using port:8080
 EXPOSE 8080
-#Command that starting the TCPApp
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# run the app
+ENTRYPOINT ["java", "-jar", "TCPServer.jar"]
