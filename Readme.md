@@ -36,7 +36,7 @@ The Toyota Backend Project is a microservice platform for collecting, processing
 
 ##### Clone the Repository
 ```bash
-git clone https://github.com/your-username/toyota-backend-project.git
+git clone https://github.com/ohNando/Toyota32Bit-backend.git
 cd toyota-backend-project
 ```
 
