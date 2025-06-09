@@ -25,10 +25,10 @@ public class HazelcastConfig {
         config.setInstanceName("main-hazelcast-instance");
 
         MapConfig rawRateConfig = new MapConfig();
-        rawRateConfig.setName("raw-rates").setTimeToLiveSeconds(300);
+        rawRateConfig.setName("raw-rates").setTimeToLiveSeconds(120);
 
         MapConfig calculatedRateConfig = new MapConfig();
-        calculatedRateConfig.setName("calculated-rates").setTimeToLiveSeconds(300);
+        calculatedRateConfig.setName("calculated-rates").setTimeToLiveSeconds(120);
 
         config.addMapConfig(rawRateConfig);
         config.addMapConfig(calculatedRateConfig);

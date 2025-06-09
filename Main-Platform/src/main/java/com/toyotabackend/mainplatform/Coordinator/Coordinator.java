@@ -179,7 +179,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
         logger.info("Program is closing");
         for (String subscriberName : subscriberMap.keySet()) {
             SubscriberInterface sub = this.subscriberMap.get(subscriberName);
-            sub.disConnect(subscriberName, username, password);
+            sub.disConnect(subscriberName);
             subscriberMap.remove(subscriberName);
         }
 
@@ -197,6 +197,7 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
+                logger.error("Main thread interrupted: {}", e.getMessage(), e);
                 throw new RuntimeException(e);
             }
 
@@ -204,8 +205,10 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
                 logger.info("Coordinator is calculating : {}",calculatedRate);
                 RateDto dto = calculator.calculateRate(calculatedRate);
                 if (dto == null) {
+                    logger.warn("Couldn't calculate rate: {}", calculatedRate);
                     continue;
                 }
+
                 rateCache.updateCalculatedRate(dto);
                 kafka.produceRate(dto);
             }
@@ -265,6 +268,12 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     public void onRateAvailable(String platformName, String rateName, RateDto dto) {
         logger.info("Rate available for platform {} -- rateName {}", platformName, rateName);
         dto.setStatus(RateStatus.AVAILABLE);
+
+        if(!rateService.isWithinTolerance(dto)){
+            logger.info("Rate is out of tolerance, skipping: {}", dto.getRateName());
+            return;
+        }
+
         this.rateStatusMap.put(rateName, RateStatus.AVAILABLE);
         rateCache.updateRawRate(dto);
         kafka.produceRate(dto);
@@ -281,6 +290,12 @@ public class Coordinator extends Thread implements CoordinatorInterface, AutoClo
     public void onRateUpdate(String platformName, String rateName, RateDto dto) {
         logger.info("Rate updated for platform {} -- rateName {}", platformName, rateName);
         dto.setStatus(RateStatus.UPDATED);
+
+        if(!rateService.isWithinTolerance(dto)){
+            logger.info("Rate is out of tolerance, skipping: {}", dto.getRateName());
+            return;
+        }
+
         this.rateStatusMap.put(rateName, RateStatus.UPDATED);
         rateCache.updateRawRate(dto);
         kafka.produceRate(dto);

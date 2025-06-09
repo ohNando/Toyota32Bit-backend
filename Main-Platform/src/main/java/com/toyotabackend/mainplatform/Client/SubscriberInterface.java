@@ -20,11 +20,9 @@ public interface SubscriberInterface {
      * Disconnects from the given platform.
      *
      * @param platformName the name of the platform to disconnect from
-     * @param username      the username for authentication (if required)
-     * @param password      the password for authentication (if required)
      * @return true if disconnection is successful, false otherwise
      */
-    void disConnect(String platformName, String username, String password);
+    void disConnect(String platformName);
 
     /**
      * Subscribes to a specific rate on the given platform.

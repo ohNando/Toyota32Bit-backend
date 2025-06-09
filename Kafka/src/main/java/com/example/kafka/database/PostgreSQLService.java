@@ -32,7 +32,7 @@ public class PostgreSQLService {
          * @param rate List of RateDto objects to be saved.
          */
         @Transactional // For this entire method run as a single database operation
-        public void updateRates(Rate rate) {
+        public void updateRate(Rate rate) {
             if(rate == null || rate.getRateName() == null) {
                 System.out.println("Rate list is empty or null. No action will be performed.");
                 return;

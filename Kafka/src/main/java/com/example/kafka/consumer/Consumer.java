@@ -27,7 +27,7 @@ public class Consumer {
         }
 
         try {
-            postgreSQLService.updateRates(rateToSave);
+            postgreSQLService.updateRate(rateToSave);
             OSService.updateRate(rateToSave);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update rate " + rateToSave.getRateName(), e);

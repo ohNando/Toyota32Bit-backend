@@ -97,6 +97,7 @@ services:
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
     ports:
       - "9201:9200"
     networks:
@@ -159,6 +160,7 @@ services:
     container_name: main-platform
     depends_on:
       - kafka_broker
+    mem_limit: 512m
     volumes:
       - ./Main-Platform/logs:/logs
     ports:

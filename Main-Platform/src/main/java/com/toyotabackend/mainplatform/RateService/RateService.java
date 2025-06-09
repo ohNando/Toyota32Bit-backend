@@ -32,4 +32,23 @@ public class RateService {
     public List<RateDto> getRawRateContains(String symbol) {
         return cache.getRawRates(symbol);
     }
+
+    public boolean isWithinTolerance(RateDto dto) {
+        RateDto lastDto = cache.getRawRateDto(dto.getRateName());
+
+        //If the cache has no rate it should accept
+        if(lastDto == null) { return true; }
+
+        //Getting rate parts
+        float newBid = dto.getBid();
+        float newAsk = dto.getAsk();
+        float oldBid = lastDto.getBid();
+        float oldAsk = lastDto.getAsk();
+
+        float bidChange = Math.abs((newBid - oldBid) / oldBid);
+        float askChange = Math.abs((newAsk - oldAsk) / oldAsk);
+
+        //If the change is less than %1 then we accept the rate
+        return bidChange <= 0.01f && askChange <= 0.01f;
+    }
 }

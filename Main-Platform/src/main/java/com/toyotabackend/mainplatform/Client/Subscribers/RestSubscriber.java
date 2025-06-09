@@ -73,7 +73,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
 
     @Override
     public boolean checkPlatformName(String platformName){
-        if (!platformName.equals("PF2")) {
+        if (!platformName.equals(subscriberName)) {
             logger.warn("Invalid platform name: {}", platformName);
             this.connectionStatus = false;
             return false ;
@@ -109,7 +109,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
             
             UserAuth loginResponse = response.getBody();
 
-            if (loginResponse.getStatus().equals("success")) {
+            if (loginResponse != null &&loginResponse.getStatus().equals("success")) {
                 logger.info("Successfully connected to {} with username {}", baseUrl, username);
             } else {
                 logger.warn("Failed to login to {} with username {}", baseUrl, username);
@@ -133,11 +133,9 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
      * and call the onDisconnect method.
      *
      * @param platformName the platform identifier
-     * @param username     the username
-     * @param password     the password
      */
     @Override
-    public void disConnect(String platformName, String username, String password){
+    public void disConnect(String platformName){
         if(!checkPlatformName(platformName)) return;
 
         logger.info("Disconnecting from {}", baseUrl);
@@ -186,7 +184,7 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
     @Override
     public void run() {
         logger.info("Subscriber is starting.");
-        while(connectionStatus){
+        while(connectionStatus && !Thread.currentThread().isInterrupted()){
             for(String rateName : subscribedRates){
                 String requestURL = baseUrl + "/" + rateName;
                 ResponseEntity<RateDto> response = null;
@@ -197,15 +195,8 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                     try{
                         response = restTemplate.getForEntity(requestURL, RateDto.class);
                         if(response.getBody() != null && response.getBody().getRateUpdateTime() == null){
-                            logger.debug("RateUpdateTime for {} was null , set to current time.",
-                                    response.getBody().getRateUpdateTime());
                             response.getBody().setRateUpdateTime(Instant.now());
                         }
-                        logger.info("DTO INFO (from rest api)= {} {} {} Time = {}",
-                                response.getBody().getRateName(),
-                                response.getBody().getBid(),
-                                response.getBody().getAsk(),
-                                response.getBody().getRateUpdateTime());
                         if(response.getStatusCode() == HttpStatus.OK){
                             successful = true;
                         }else{
@@ -234,26 +225,28 @@ public class RestSubscriber extends Thread implements SubscriberInterface {
                 }
 
                 RateDto dto = response.getBody();
-                switch (coordinator.onRateStatus(this.subscriberName,dto.getRateName())) {
-                    case RateStatus.NOT_AVAILABLE:
-                        logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateAvailable(this.subscriberName, dto.getRateName(), dto);
-                        break;
-                    case RateStatus.AVAILABLE:
-                        logger.info("Fetched rate in AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
-                        break;
-                    case RateStatus.UPDATED:
-                        logger.info("Fetched rate in UPDATED: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-                        coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
-                        break;
+                if(dto != null){
+                    switch (coordinator.onRateStatus(this.subscriberName,dto.getRateName())) {
+                        case RateStatus.NOT_AVAILABLE:
+                            logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                            coordinator.onRateAvailable(this.subscriberName, dto.getRateName(), dto);
+                            break;
+                        case RateStatus.AVAILABLE:
+                            logger.info("Fetched rate in AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                            coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
+                            break;
+                        case RateStatus.UPDATED:
+                            logger.info("Fetched rate in UPDATED: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
+                            coordinator.onRateUpdate(this.subscriberName, dto.getRateName(), dto);
+                            break;
+                    }
                 }
             }
 
             try{
                 Thread.sleep(1000);
             }catch(InterruptedException e){
-                logger.error("PF2 subscriber Error : {}",e.getMessage());
+                logger.error("{} subscriber Error : {}",subscriberName,e.getMessage());
                 this.connectionStatus = false;
             }
         }

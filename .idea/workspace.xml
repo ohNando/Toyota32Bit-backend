@@ -21,12 +21,8 @@
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/User/User.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/TCP-Platform/src/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/Consumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/consumer/RateDeserializer.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/database/PostgreSQLService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Kafka/src/main/java/com/example/kafka/opensearch/OpensearchService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Main-Platform/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main-Platform/Scripts/DerivedRateCalculator.groovy" beforeDir="false" />
@@ -71,7 +67,6 @@
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TCP-Platform/src/Server/RateServerHandler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filebeat.yml" beforeDir="false" afterPath="$PROJECT_DIR$/filebeat.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,7 +196,9 @@
       <workItem from="1749423749458" duration="558000" />
       <workItem from="1749424314476" duration="3359000" />
       <workItem from="1749432088183" duration="2283000" />
-      <workItem from="1749436953201" duration="2674000" />
+      <workItem from="1749436953201" duration="3304000" />
+      <workItem from="1749458173581" duration="63000" />
+      <workItem from="1749462580722" duration="6342000" />
     </task>
     <servers />
   </component>

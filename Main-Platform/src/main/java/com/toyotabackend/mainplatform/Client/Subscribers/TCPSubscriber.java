@@ -39,6 +39,9 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     private int serverPort;
     private String subscriberName;
 
+    private String username;
+    private String password;
+
     private List<String> subscribedRates;
     private CoordinatorInterface coordinator;
     private Socket socket;
@@ -87,7 +90,7 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
 
     @Override
     public boolean checkPlatformName(String platformName){
-        if (!platformName.equals("PF1")) {
+        if (!platformName.equals(subscriberName)) {
             logger.warn("Invalid platform name: {}", platformName);
             this.connectionStatus = false;
             return false ;
@@ -106,6 +109,9 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     @Override
     public void connect(String platformName, String username, String password) throws IOException {
         if(!checkPlatformName(platformName)) return;
+
+        this.username = username;
+        this.password = password;
 
         try{
             socket = new Socket(serverAddress, serverPort);
@@ -129,12 +135,13 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
         logger.info("Trying to login to {} : {}",serverAddress,serverPort);
 
         String loginMessage = String.format("login|%s|%s", username, password);
-        output.println(loginMessage);
-        if(!socket.isConnected()){
-            socket.close();
+        if(socket == null || !socket.isConnected()){
             logger.error("Failed to connect to {}:{}",serverAddress,serverPort);
+            return;
         }
-        logger.info("PF1 is connected to {} : {}",serverAddress,serverPort);
+        output.println(loginMessage);
+
+        logger.info("{} is connected to {} : {}",subscriberName,serverAddress,serverPort);
         coordinator.onConnect(platformName, connectionStatus);
         this.start();
     }
@@ -143,11 +150,9 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
      * Disconnects from the TCP platform and closes all streams.
      *
      * @param platformName the platform identifier
-     * @param username     the login username
-     * @param password     the login password
      */
     @Override
-    public void disConnect(String platformName, String username, String password) {
+    public void disConnect(String platformName) {
         if(!checkPlatformName(platformName)) return;
 
         try{
@@ -201,22 +206,53 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
     @Override
     public void run() {
         logger.info("Subscriber is starting.");
+        int retryCount = 0;
+        final int maxRetries = 3;
+
         String response;
-        logger.info("CONNECTION STATUS = {}",this.connectionStatus);
-        while(this.connectionStatus){
+        while(!Thread.currentThread().isInterrupted()){
+            if(!connectionStatus){
+                if(retryCount >= maxRetries){
+                    logger.error("Max tries reached. Disconnecting safely.");
+                    disConnect(subscriberName);
+                    break;
+                }
+                logger.warn("Trying to reconnect... attempt {}/{}", retryCount+1, maxRetries);
+                try{
+                    this.connect(subscriberName,username,password);
+
+                    if(connectionStatus){
+                        logger.info("Reconnected successfully");
+                        retryCount = 0;
+                    }else{
+                        retryCount++;
+                        Thread.sleep(1000);
+                        continue;
+                    }
+                }catch(IOException |  InterruptedException e){
+                    logger.error("Reconnect attemp failed {}",e.getMessage());
+                    retryCount++;
+                    try{ Thread.sleep(1000); }
+                    catch(InterruptedException error){ logger.error("Reconnect interrupted {}",e.getMessage()); }
+                    continue;
+                }
+
+            }
+
             try{
                 response = input.readLine();
                 logger.info(response);
                 if(response ==  null){
-                    logger.warn("NO RATE AVAILABLE");
+                    logger.warn("NO RATE AVAILABLE - Possibly disconnected");
+                    setConnectionStatus(false);
+                    coordinator.onDisConnect(subscriberName,connectionStatus);
                     continue;
                 }
+
                 RateDto dto = RateMapper.stringToDTO(response);
                 if(dto != null){
-                    logger.info("DTO INFO = {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
-
                     for(String subscribedRate : subscribedRates){
-                        if(dto.getRateName().equals("PF1" + "_" + subscribedRate)){
+                        if(dto.getRateName().equals(subscriberName + "_" + subscribedRate)){
                             switch (coordinator.onRateStatus(this.subscriberName, dto.getRateName())) {
                                 case RateStatus.NOT_AVAILABLE:
                                     logger.info("Fetched rate in NOT_AVAILABLE: {} {} {}",dto.getRateName(),dto.getBid(),dto.getAsk());
@@ -236,9 +272,10 @@ public class TCPSubscriber extends Thread implements SubscriberInterface { //Sub
                 }
 
             }catch(IOException error){
-                logger.error("PF1" + "Subscriber Error: {}", error.getMessage());
+                logger.error("{} Subscriber Error: {}",subscriberName, error.getMessage());
+                this.setConnectionStatus(false);
+                coordinator.onDisConnect(subscriberName,connectionStatus);
             }
         }
-        logger.info("DISCONNECTING");
     }
 }
