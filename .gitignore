@@ -1,5 +1,8 @@
 ### idea files ###
 .idea
+*.iws
+*.iml
+*.ipr
 
 ### For big logs ###
 logs
